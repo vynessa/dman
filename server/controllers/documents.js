@@ -1,7 +1,8 @@
-import Document from './../models/document';
+const Document = require('./../models/document');
 
 module.exports = {
   createDocument(req, res) {
+    console.log(req.body);
     return Document
     .create({
       title: req.body.title,

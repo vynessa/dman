@@ -8,13 +8,14 @@ const port = 8000 || process.env.PORT;
 
 app.use(logger('dev'));
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./routes/router')(app);
-app.get('*', (req, res) => res.status(200).send({
-  message: 'Hello there'
-}));
+
+app.get('*', (req, res) => res.status(200).send(
+  `Hello there! The API is at http://localhost:${port}/api`
+));
 
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
