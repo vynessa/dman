@@ -4,13 +4,24 @@
   "description": "A Document Management System",
   "main": "index.js",
   "scripts": {
-    "start": "gulp serve",
+    "start": "NODE_ENV=production gulp serve",
+    "start:dev": "NODE_ENV=development gulp serve",
     "test": "gulp coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vynessa/dman.git"
   },
+  "keywords": [
+    "document manager",
+    "api",
+    "Node Js",
+    "express",
+    "gulp",
+    "ecmascript6",
+    "learning",
+    "solution"
+  ],
   "author": "Vanessa Ejikeme",
   "license": "ISC",
   "bugs": {
@@ -18,9 +29,11 @@
   },
   "homepage": "https://github.com/vynessa/dman#readme",
   "devDependencies": {
+    "dotenv": "^4.0.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.7.0"
+    "eslint-plugin-import": "^2.7.0",
+    "supertest": "^3.0.0"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",

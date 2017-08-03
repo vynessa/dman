@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   });
+
   Document.associate = (models) => {
     Document.belongsTo(models.User, {
       foreignKey: 'userId',

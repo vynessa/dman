@@ -33,7 +33,7 @@ build/Release
 node_modules
 jspm_packages
 
-#visual studio code settings
+# visual studio code settings
 .vscode
 
 # Finder stuff
@@ -41,7 +41,6 @@ jspm_packages
 
 # Optional npm cache directory
 .npm
-
 
 # Optional REPL history
 .node_repl_history```

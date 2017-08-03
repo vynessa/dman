@@ -20,7 +20,7 @@ gulp.task('api-tests', () => {
 });
 
 gulp.task('run-tests', () => {
-  return gulp.src(['tests/*.js'])
+  gulp.src(['tests/*.js'])
     .pipe(jasmineNode(jasmineNodeOpts));
 });
 
