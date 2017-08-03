@@ -1,17 +1,13 @@
-// import express from 'express';
-import documentsController from './../controllers/documents';
-import usersController from './../controllers/users';
+import express from 'express';
+import UsersController from './../controllers/UsersController';
 
-// const router = express.Router();
+const router = express.Router();
 
+router.get('/api/v1', (req, res) => res.status(200).send({
+  message: 'Welcome to the dMan API!',
+}));
 
-module.exports = (app) => {
-  app.get('/api', (req, res) => res.status(200).send(
-    'Welcome to the dMan API!',
-  ));
+router.get('/api/v1/users', UsersController.getUsers);
+router.post('/api/v1/users', UsersController.createUser);
 
-  // app.get('/api/v1/users', usersController.getUser);
-  app.post('/api/v1/documents', documentsController.createDocument);
-
-  // app.get('/api/v1/documents', documentsController.createDocument);
-};
+module.exports = router;
