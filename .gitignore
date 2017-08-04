@@ -49,4 +49,4 @@ jspm_packages
 .env
 
 # transpiled code
-dist
+build

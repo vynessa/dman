@@ -20,3 +20,5 @@ app.get('*', (req, res) => res.status(200).send(
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
 });
+
+export default app;
