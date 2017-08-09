@@ -4,12 +4,12 @@ import app from '../server/server';
 
 const api = request(app);
 
-describe('', () => {
+describe('Users Controller Test suite', () => {
   describe('', () => {
-    it('should respond with all users', (done) => {
+    it('should respond with ok', (done) => {
       api
-        .get('/api/v1/users')
-        .expect('Content-Type', 'application/json; charset=utf-8')
+        .get('/api/v1/users/auth/register')
+        .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200, done);
     });
   });

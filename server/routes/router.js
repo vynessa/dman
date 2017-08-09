@@ -7,8 +7,11 @@ router.get('/api/v1', (req, res) => res.status(200).send({
   message: 'Welcome to the dMan API!',
 }));
 
-router.post('/api/v1/users/register', UsersController.registerUser)
-  .get('/api/v1/users', UsersController.getUsers);
-  // .post('/api/v1/users', UsersController.createUser);
+router.get('/api/v1/users', UsersController.getUsers)
+  .post('/api/v1/users/createuser', UsersController.createUser)
+  .post('/api/v1/users/auth/register', UsersController.registerUser)
+  .post('/api/v1/users/auth/login', UsersController.loginUser)
+  .put('/api/v1/users/:id', UsersController.updateUser)
+  .delete('/api/v1/users/:id', UsersController.deleteUser);
 
-module.exports = router;
+export default router;
