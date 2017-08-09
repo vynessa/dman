@@ -9,6 +9,7 @@ class Helpers {
    * @description
    * @static
    * @param {any} req
+   * @param {any} res
    * @returns {object} User
    * @memberof Helpers
    */
@@ -18,11 +19,11 @@ class Helpers {
       fullName: req.body.fullName,
       email: req.body.email,
       role: 'user',
-      password: req.body.password
+      password: user.generateHash(req.body.password)
     })
       .then((newUser) => {
         const token = user.generateJWT(newUser.id, newUser.role);
-        res.status(200).send({
+        res.status(201).send({
           message: 'User created successfully!',
           user: {
             token,
@@ -34,7 +35,7 @@ class Helpers {
           }
         });
       })
-      .catch(error => res.status(401).send(error));
+      .catch(error => res.status(400).send(error));
   }
 }
 
