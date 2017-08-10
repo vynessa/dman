@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
   if (req.url.startsWith('/users/auth')) return next();
   if (!req.headers.authorization) {
     return res.status(400).json({
-      message: 'Please Set Token in the Header'
+      message: 'Please set token in the header'
     });
   }
   const token = req.headers.authorization;
@@ -24,17 +24,18 @@ const verifyToken = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
       if (error) {
         return res.status(400).json({
-          message: 'Token not valid Please login'
+          message: 'Invalid token. Please login :)'
         });
       }
       // request user detail for other routes
       req.decoded = decoded;
       next();
     });
+  } else {
+    return res.status(400).json({
+      message: 'Empty Token'
+    });
   }
-  return res.status(401).json({
-    message: 'Empty Token'
-  });
 };
 
 export default verifyToken;

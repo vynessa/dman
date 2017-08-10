@@ -40,7 +40,6 @@ class UsersController {
    * @memberof UsersController
    */
   static loginUser(req, res) {
-    console.log('req.decoded', req.decoded);
     User.find({
       where: {
         email: req.body.email
@@ -194,14 +193,13 @@ class UsersController {
       return User.findById(req.params.id)
         .then((user) => {
           if (user) {
-            return user.destroy().then(() =>
-              res
+            return user.destroy().then(() => res
                 .status(200)
                 .send({
                   message: 'Yipee! User deleted successfully!'
                 })
-                .catch(error => res.status(400).send(error))
-            );
+            )
+            .catch(error => res.status(400).send(error));
           }
           return res.status(404).send({
             message: 'User not found! :('
@@ -210,7 +208,7 @@ class UsersController {
         .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
-      message: 'Unathuorized Access'
+      message: 'Unathuorized Access! Only an admin can delete a user.'
     });
   }
 }
