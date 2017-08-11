@@ -1,5 +1,5 @@
 import Helpers from '../utils/helper';
-import { User } from '../models';
+import { User, Document } from '../models';
 
 /**
  * @class UsersController
@@ -129,7 +129,7 @@ class UsersController {
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return res.status(400).send({
-        message: 'Invalid User ID'
+        message: 'Invalid user ID. Please enter a valid ID'
       });
     }
     User.findById(req.params.id)
@@ -155,7 +155,7 @@ class UsersController {
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return res.status(400).send({
-        message: 'Invalid User ID'
+        message: 'Invalid user ID'
       });
     }
     if (req.body.password) {
@@ -167,7 +167,7 @@ class UsersController {
         if (req.body.role) {
           if (req.decoded.role !== 'admin') {
             return res.status(401).send({
-              message: 'Unauthorized Access, Only Admin can Update Role'
+              message: 'Unauthorized access! Only an admin can update roles'
             });
           }
         }
@@ -178,14 +178,14 @@ class UsersController {
         }
         if (Number(req.decoded.id) !== Number(req.params.id)) {
           return res.status(401).send({
-            message: 'Unauthorized Access'
+            message: 'Unauthorized access'
           });
         }
         return user
           .update(req.body, { fields: Object.keys(req.body) })
           .then(() =>
             res.status(200).send({
-              message: 'Account Successfully Updated',
+              message: 'Account successfully updated',
               user: {
                 name: user.fullName,
                 email: user.email,
@@ -210,7 +210,7 @@ class UsersController {
   static deleteUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return res.status(400).send({
-        message: 'Invalid User ID'
+        message: 'Invalid user ID'
       });
     }
     if (Number(req.decoded.id) === Number(req.params.id)
@@ -233,7 +233,7 @@ class UsersController {
         .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
-      message: 'Unathuorized Access! Only an admin can delete a user.'
+      message: 'Unathuorized Access! Only an admin can delete a user. ¯¯|_(ツ)_|¯¯'
     });
   }
 }
