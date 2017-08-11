@@ -7,11 +7,11 @@
     "dialect": "postgres"
   },
   "test": {
-    "use_env_variable": "D_MAN",
+    "use_env_variable": "DB_PORT",
     "dialect": "postgres"
   },
   "production": {
-    "use_env_variable": "D_MAN",
+    "use_env_variable": "DB_PORT",
     "dialect": "postgres"
   }
 }
