@@ -16,7 +16,7 @@ app.use('/api/v1', verifyToken);
 app.use(router);
 
 app.get('*', (req, res) => res.status(200).send(
-  `Hello there! The API is at http://localhost:${port}/api`
+  `Hello there! The API is at http://localhost:${port}/api/v1`
 ));
 
 app.listen(port, () => {
