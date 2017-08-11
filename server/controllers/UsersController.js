@@ -1,6 +1,5 @@
 import Helpers from '../utils/helper';
-
-const User = require('../models').User;
+import { User } from '../models';
 
 /**
  * @class UsersController
@@ -122,6 +121,32 @@ class UsersController {
   /**
    * @description
    * @static
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} response
+   * @memberof UsersController
+   */
+  static findUser(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).send({
+        message: 'Invalid User ID'
+      });
+    }
+    User.findById(req.params.id)
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({
+            message: 'User not found'
+          });
+        }
+        return res.status(200).send(user);
+      })
+      .catch(err => res.status(401).send(err));
+  }
+
+  /**
+   * @description
+   * @static
    * @param {any} req
    * @param {any} res
    * @returns {object} response
@@ -139,6 +164,13 @@ class UsersController {
     }
     return User.findById(req.params.id)
       .then((user) => {
+        if (req.body.role) {
+          if (req.decoded.role !== 'admin') {
+            return res.status(401).send({
+              message: 'Unauthorized Access, Only Admin can Update Role'
+            });
+          }
+        }
         if (!user) {
           return res.status(400).send({
             message: 'Sorry, the user does not exist!'
@@ -148,13 +180,6 @@ class UsersController {
           return res.status(401).send({
             message: 'Unauthorized Access'
           });
-        }
-        if (req.body.role) {
-          if (req.decoded.role !== 'admin') {
-            return res.status(401).send({
-              message: 'Unauthorized Access, Only Admin can Update Role'
-            });
-          }
         }
         return user
           .update(req.body, { fields: Object.keys(req.body) })

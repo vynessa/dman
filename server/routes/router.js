@@ -8,6 +8,7 @@ router.get('/api/v1', (req, res) => res.status(200).send({
 }));
 
 router.get('/api/v1/users', UsersController.getUsers)
+  .get('/api/v1/users/:id', UsersController.findUser)
   .post('/api/v1/users/createuser', UsersController.createUser)
   .post('/api/v1/users/auth/register', UsersController.registerUser)
   .post('/api/v1/users/auth/login', UsersController.loginUser)
