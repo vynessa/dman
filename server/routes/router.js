@@ -1,5 +1,6 @@
 import express from 'express';
 import UsersController from './../controllers/UsersController';
+import DocsController from './../controllers/DocsController';
 
 const router = express.Router();
 
@@ -14,5 +15,10 @@ router.get('/api/v1/users', UsersController.getUsers)
   .post('/api/v1/users/auth/login', UsersController.loginUser)
   .put('/api/v1/users/:id', UsersController.updateUser)
   .delete('/api/v1/users/:id', UsersController.deleteUser);
+
+router.get('/api/v1/documents', DocsController.getDocuments)
+  .post('/api/v1/documents', DocsController.createDocument)
+  .put('/api/v1/documents/:id', DocsController.updateDocument)
+  .delete('/api/v1/documents/:id', DocsController.deleteDocument);
 
 export default router;
