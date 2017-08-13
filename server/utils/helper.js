@@ -72,6 +72,30 @@ class Helpers {
       )
       .catch(error => res.status(400).send(error));
   }
+
+  /**
+   * @description
+   * @param {any} res
+   * @returns {object} response
+   * @memberof Helpers
+   */
+  static invalidDocIdMessage(res) {
+    return res.status(400).send({
+      message: 'Invalid document ID. Please enter a valid ID'
+    });
+  }
+
+  /**
+   * @description
+   * @param {any} res
+   * @returns {object} response
+   * @memberof Helpers
+   */
+  static invalidUserIdMessage(res) {
+    return res.status(400).send({
+      message: 'Invalid user ID. Please enter a valid ID'
+    });
+  }
 }
 
 export default Helpers;

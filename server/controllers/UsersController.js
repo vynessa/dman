@@ -27,7 +27,7 @@ class UsersController {
           message: 'This user already exists!'
         });
       })
-      .catch(err => res.status(401).send(err));
+      .catch(err => res.status(400).send(err));
   }
 
   /**
@@ -46,7 +46,7 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(401).send({
+          return res.status(400).send({
             success: false,
             message: 'Sorry, the email does not exist!'
           });
@@ -57,7 +57,7 @@ class UsersController {
           returningUser.password
         );
         if (!checkPassword) {
-          return res.status(401).send({
+          return res.status(400).send({
             message: 'Invalid password'
           });
         }
@@ -73,7 +73,7 @@ class UsersController {
           }
         });
       })
-      .catch(err => res.status(401).send(err));
+      .catch(err => res.status(400).send(err));
   }
 
   /**
@@ -128,9 +128,7 @@ class UsersController {
    */
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid user ID. Please enter a valid ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     User.findById(req.params.id)
       .then((user) => {
@@ -141,7 +139,7 @@ class UsersController {
         }
         return res.status(200).send(user);
       })
-      .catch(err => res.status(401).send(err));
+      .catch(err => res.status(400).send(err));
   }
 
   /**
@@ -154,9 +152,7 @@ class UsersController {
    */
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid user ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     if (req.body.password) {
       const user = new User();
@@ -196,7 +192,7 @@ class UsersController {
           )
           .catch(error => res.status(400).send(error));
       })
-      .catch(error => res.status(401).send(error));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -209,9 +205,7 @@ class UsersController {
    */
   static deleteUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid user ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     if (Number(req.decoded.id) === Number(req.params.id)
       || req.decoded.role === 'admin') {

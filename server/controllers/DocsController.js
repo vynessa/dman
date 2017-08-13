@@ -46,9 +46,7 @@ class DocsController {
    */
   static updateDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid document ID. Please enter a valid ID'
-      });
+      return Helpers.invalidDocIdMessage(res);
     }
     // if (req.body.password) {
     //   const user = new User();
@@ -88,7 +86,7 @@ class DocsController {
           )
           .catch(error => res.status(400).send(error));
       })
-      .catch(error => res.status(401).send(error));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -101,9 +99,7 @@ class DocsController {
    */
   static deleteDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid document ID. Please enter a valid ID'
-      });
+      return Helpers.invalidDocIdMessage(res);
     }
     if (
       Number(req.decoded.id) === Number(req.params.userId) ||
