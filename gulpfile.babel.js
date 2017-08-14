@@ -8,8 +8,8 @@ import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
 
 const jasmineNodeOpts = {
-  timeout: 1000,
-  includeStackTrace: false,
+  timeout: 500000,
+  includeStackTrace: true,
   color: true
 };
 
@@ -33,11 +33,11 @@ gulp.task('test', () => {
 });
 
 gulp.task('coverage', (cb) => {
-  gulp.src('server/**/*.js')
+  gulp.src(['server/**/*.js', '!server/tests/**/*.spec.js'])
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('./server/tests/**/*.js')
+      gulp.src(['./server/tests/**/*.js'])
         .pipe(babel())
         .pipe(injectModules())
         .pipe(jasmineNode())

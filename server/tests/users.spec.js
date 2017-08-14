@@ -1,4 +1,3 @@
-/* global */
 import request from 'supertest';
 import { assert } from 'chai';
 import app from '../server';
@@ -11,30 +10,10 @@ let token, role, fullName, email, password;
 describe('Users Controller Test suite', () => {
   beforeEach((done) => {
     api
-    .post('/api/v1/users/auth/register')
-    .send({
-      fullName: 'Treasure Ejikeme',
-      email: 'treasure.ejikeme@gmail.com',
-      password: 'treasure'
-    })
-    .expect('Content-Type', /json/)
-    .expect(200)
-    .end((err, res) => {
-      if (!err) {
-        token = res.body.token;
-        fullName = res.body.user.fullName;
-        email = res.body.user.email;
-        password = res.body.user.password;
-        done();
-      }
-    });
-
-    api
       .post('/api/v1/users/auth/login')
       .send({
-        email: 'vanessa.williams@gmail.com',
-        password: 'vanessa',
-        role: 'admin'
+        email: 'info@admin.com',
+        password: 'adminhere'
       })
       .expect('Content-Type', /json/)
       .expect(200)
@@ -44,64 +23,29 @@ describe('Users Controller Test suite', () => {
           email = res.body.email;
           password = res.body.password;
           role = res.body.role;
-          done();
         }
-      });
+        done();
+      }, 500000);
   });
 
-  // describe('Set Authorization token', () => {
-  //   it('should get a valid token for user', (done) => {
-  //     api
-  //       .post('/api/v1/users/auth/register')
-  //       .set('Authorization', `${token}`)
-  //       .expect(200, done);
-  //   });
-  // });
   describe('POST `/api/v1/users/auth/register`', () => {
-    it('should respond with ok when a user is successfully created', (done) => {
+    it('should respond with an arror if the email exists', (done) => {
       api
         .post('/api/v1/users/auth/register')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .send({
           fullName: 'Vanessa Willams',
-          email: 'vanessa.williams@gmail.com',
+          email: 'info@admin.com',
           password: 'vanessa'
         })
-        .expect(200)
+        .expect(409)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'User created successfully!');
+            assert(res.body.message === 'This user already exists!');
           }
           done();
         });
-    });
-  });
-
-  describe('GET `/api/v1/users`', () => {
-    it('should respond with ok when user role equals `admin`', (done) => {
-      api
-        .get('/api/v1/users')
-        .set('Authorization', `${token}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200)
-        .end((err, res) => {
-          if (!err) {
-            assert.isDefined(res.body);
-            // assert(res.decoded.role === 'admin');
-          }
-          done();
-        });
-    });
-
-    it('should respond with Unauthorized acess', (done) => {
-      api
-        .get('/api/v1/users')
-        .set('Authorization', `${token}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(401, done);
     });
   });
 
@@ -112,8 +56,8 @@ describe('Users Controller Test suite', () => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .send({
-          email: 'vanessa.williams@gmail.com',
-          password: 'vanessa'
+          email: 'info@admin.com',
+          password: 'adminhere'
         })
         .expect(200)
         .end((err, res) => {
@@ -130,7 +74,7 @@ describe('Users Controller Test suite', () => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .send({
-          email: 'vanessa.williams@gmail.com',
+          email: 'info@admin.com',
           password: 'hnbnhg'
         })
         .expect(400)
@@ -142,7 +86,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with 400 when the password is incorrect', (done) => {
+    it('should respond with 404 if the email does not exist', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -151,7 +95,7 @@ describe('Users Controller Test suite', () => {
           email: 'vanessa.wiliams@gmail.com',
           password: 'vanessa'
         })
-        .expect(400)
+        .expect(404)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Sorry, the email does not exist!');
@@ -161,3 +105,4 @@ describe('Users Controller Test suite', () => {
     });
   });
 });
+

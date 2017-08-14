@@ -46,7 +46,7 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(400).send({
+          return res.status(404).send({
             success: false,
             message: 'Sorry, the email does not exist!'
           });

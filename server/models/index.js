@@ -1,9 +1,9 @@
 'use strict';
 
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
-import dotenv from 'dotenv';
 
 dotenv.config();
 const basename = path.basename(module.filename);

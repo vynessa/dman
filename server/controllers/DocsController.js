@@ -20,7 +20,14 @@ class DocsController {
       });
     }
     Document.findAll()
-      .then(documents => res.status(200).send(documents))
+      .then((documents) => {
+        if (documents.length === 0) {
+          return res.status(404).send({
+            message: 'No document found!'
+          });
+        }
+        return res.status(200).send(documents);
+      })
       .catch(error => res.status(401).send(error));
   }
 
@@ -35,6 +42,30 @@ class DocsController {
   static createDocument(req, res) {
     return Helpers.createDocument(req, res);
   }
+
+  // /**
+  //  * @description
+  //  * @static
+  //  * @param {object} req
+  //  * @param {object} res
+  //  * @returns {object} response
+  //  * @memberof UsersController
+  //  */
+  // static findDocument(req, res) {
+  //   if (!Number.isInteger(Number(req.params.id))) {
+  //     return Helpers.invalidDocIdMessage(res);
+  //   }
+  //   User.findById(req.params.id)
+  //     .then((user) => {
+  //       if (!user) {
+  //         return res.status(404).send({
+  //           message: 'User not found'
+  //         });
+  //       }
+  //       return res.status(200).send(user);
+  //     })
+  //     .catch(err => res.status(400).send(err));
+  // }
 
   /**
    * @description
