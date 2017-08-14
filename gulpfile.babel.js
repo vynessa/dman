@@ -13,50 +13,44 @@ const jasmineNodeOpts = {
   color: true
 };
 
-gulp.task('api-tests', () => {
-  gulp.src('./tests/api-test.js')
-    .pipe(babel())
-    .pipe(jasmineNode(jasmineNodeOpts));
-});
-
-gulp.task('run-tests', () => {
-  return gulp.src(['tests/*.js'])
-    .pipe(jasmineNode(jasmineNodeOpts));
+gulp.task('build', () => {
+  gulp.src('server/**/*.js')
+    .pipe(babel({
+      presets: ['es2015', 'stage-0']
+    }))
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('serve', () => {
   gulpNodemon({
     script: './app.js',
-    ext: 'js html',
-    env: { NODE_ENV: process.env.NODE_ENV }
+    ext: 'js html'
   });
 });
 
+gulp.task('test', () => {
+  gulp.src('./tests/**/*.js')
+    .pipe(babel())
+    .pipe(jasmineNode(jasmineNodeOpts));
+});
+
 gulp.task('coverage', (cb) => {
-  gulp.src('src/inverted-index.js')
+  gulp.src('server/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('tests/inverted-index-test.js')
-      .pipe(babel())
-      .pipe(injectModules())
-      .pipe(jasmineNode())
-      .pipe(istanbul.writeReports())
-      .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))
-      .on('end', cb)
-      .pipe(exit());
+      gulp.src('tests/**/*.js')
+        .pipe(babel())
+        .pipe(injectModules())
+        .pipe(jasmineNode())
+        .pipe(istanbul.writeReports())
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
+        .on('end', cb)
+        .pipe(exit());
     });
 });
 
-gulp.task('test', () => {
-  gulp.src('tests/inverted-index-test.js')
-  .pipe(babel())
-  .pipe(jasmineNode(jasmineNodeOpts));
-});
-
-// Load code coverage to coveralls
 gulp.task('coveralls', ['coverage'], () => {
-  // If not running on CI environment it won't send lcov.info to coveralls
   if (!process.env.CI) {
     return;
   }
