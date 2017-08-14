@@ -14,7 +14,7 @@ const verifyToken = (req, res, next) => {
   if (req.url.startsWith('/users/auth')) return next();
   if (!req.headers.authorization) {
     return res.status(400).json({
-      message: 'Please set token in the header'
+      message: 'Please set token in the header!'
     });
   }
   const token = req.headers.authorization;
@@ -33,7 +33,7 @@ const verifyToken = (req, res, next) => {
     });
   } else {
     return res.status(400).json({
-      message: 'Empty Token'
+      message: 'Please provide a token!'
     });
   }
 };

@@ -22,12 +22,12 @@ class UsersController {
         if (!user) {
           return Helpers.createUser(req, res);
         }
-        return res.status(401).send({
+        return res.status(409).send({
           success: false,
           message: 'This user already exists!'
         });
       })
-      .catch(err => res.status(400).send(err));
+      .catch(err => res.status(500).send(err));
   }
 
   /**

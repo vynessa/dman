@@ -10,24 +10,24 @@ let token, role, fullName, email, password;
 
 describe('Users Controller Test suite', () => {
   beforeEach((done) => {
-    // api
-    // .post('/api/v1/users/auth/register')
-    // .send({
-    //   fullName: 'Vanessa Williams',
-    //   email: 'vanessa.williams@gmail.com',
-    //   password: 'vanessa'
-    // })
-    // .expect('Content-Type', /json/)
-    // .expect(200)
-    // .end((err, res) => {
-    //   if (!err) {
-    //     token = res.body.token;
-    //     fullName = res.body.user.fullName;
-    //     email = res.body.user.email;
-    //     password = res.body.user.password;
-    //     done();
-    //   }
-    // });
+    api
+    .post('/api/v1/users/auth/register')
+    .send({
+      fullName: 'Treasure Ejikeme',
+      email: 'treasure.ejikeme@gmail.com',
+      password: 'treasure'
+    })
+    .expect('Content-Type', /json/)
+    .expect(200)
+    .end((err, res) => {
+      if (!err) {
+        token = res.body.token;
+        fullName = res.body.user.fullName;
+        email = res.body.user.email;
+        password = res.body.user.password;
+        done();
+      }
+    });
 
     api
       .post('/api/v1/users/auth/login')
