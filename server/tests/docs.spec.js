@@ -81,8 +81,7 @@ describe('Document Controller Test Suite', () => {
         role: 'admin',
         password: user.generateHash('adminhere')
       }).then((response) => {
-        console.log('here=====================================');
-        console.log('here', response);
+        //
       });
       token = jwt.sign(
         {

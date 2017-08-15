@@ -8,13 +8,16 @@ import Sequelize from 'sequelize';
 dotenv.config();
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require('./../../server/config/config.json')[env];
+
+const config = require('../../server/config/config')[env];
 
 const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable]);
+  sequelize = new Sequelize(process.env.DB_PORT, {
+    dialect: 'postgres'
+  });
 } else {
   sequelize = new Sequelize(process.env.DB_PORT, {
     dialect: 'postgres'
