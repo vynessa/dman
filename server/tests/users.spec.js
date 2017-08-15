@@ -51,7 +51,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/auth/login`', () => {
-    it('should respond with ok when a user is succefully logged in', (done) => {
+    it('should respond with ok when a user is successfully logged in', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
