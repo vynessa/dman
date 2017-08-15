@@ -7,7 +7,7 @@
     "start": "NODE_ENV=production gulp serve",
     "start:dev": "NODE_ENV=development gulp serve",
     "build": "gulp build",
-    "test": "gulp coverage"
+    "test": "gulp build && gulp coverage"
   },
   "repository": {
     "type": "git",

@@ -30,7 +30,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/auth/register`', () => {
-    it('should respond with an arror if the email exists', (done) => {
+    it('should respond with an error if the email exists', (done) => {
       api
         .post('/api/v1/users/auth/register')
         .set('Accept', 'application/json')
@@ -43,7 +43,7 @@ describe('Users Controller Test suite', () => {
         .expect(409)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'This user alrexists!');
+            assert(res.body.message === 'This user already exists!');
           }
           done();
         });

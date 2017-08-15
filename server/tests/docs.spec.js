@@ -113,7 +113,7 @@ describe('Document Controller Test Suite', () => {
     });
 
     it('should return an error message if the documents array is empty', (done) => {
-      rapi
+      api
         .get('/api/v1/documents')
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
