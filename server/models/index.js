@@ -13,15 +13,12 @@ const config = require('./../../server/config/config.json')[env];
 const db = {};
 
 let sequelize;
-if (env === 'test') {
-  sequelize = new Sequelize(process.env.DB_PORT);
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {
-  if (config.use_env_variable) {
-    sequelize = new Sequelize(process.env[config.use_env_variable]);
-  } else {
-    sequelize = new Sequelize(config.database, config.username, config.password, config);
-  }
+  sequelize = new Sequelize(process.env.DB_PORT);
 }
+
 fs
   .readdirSync(__dirname)
   .filter((file) => {
