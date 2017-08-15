@@ -33,7 +33,7 @@ gulp.task('test', () => {
 });
 
 gulp.task('coverage', (cb) => {
-  gulp.src(['server/**/*.js', '!server/tests/**/*.spec.js'])
+  gulp.src('build/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
@@ -42,7 +42,7 @@ gulp.task('coverage', (cb) => {
         .pipe(injectModules())
         .pipe(jasmineNode())
         .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))
         .on('end', cb)
         .pipe(exit());
     });

@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { assert } from 'chai';
-import app from '../server';
+import app from '../../build/server';
 import { User } from '../models';
 
 const api = request(app);
@@ -11,11 +11,12 @@ describe('Users Controller Test suite', () => {
   beforeEach((done) => {
     api
       .post('/api/v1/users/auth/login')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
       .send({
-        email: 'info@admin.com',
+        email: 'inftttttttt@admin.com',
         password: 'adminhere'
       })
-      .expect('Content-Type', /json/)
       .expect(200)
       .end((err, res) => {
         if (!err) {
@@ -42,7 +43,7 @@ describe('Users Controller Test suite', () => {
         .expect(409)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'This user already exists!');
+            assert(res.body.message === 'This user alrexists!');
           }
           done();
         });
