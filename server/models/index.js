@@ -16,7 +16,9 @@ let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
 } else {
-  sequelize = new Sequelize(process.env.DB_PORT);
+  sequelize = new Sequelize(process.env.DB_PORT, {
+    dialect: 'postgres'
+  });
 }
 
 fs
