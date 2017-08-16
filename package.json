@@ -4,7 +4,7 @@
   "description": "A Document Management System",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production gulp serve",
+    "start": "NODE_ENV=production gulp build && gulp serve",
     "start:dev": "NODE_ENV=development gulp serve",
     "build": "gulp build",
     "test": "NODE_ENV=test gulp build && gulp coverage"
@@ -47,6 +47,7 @@
     "dotenv": "^4.0.0",
     "expect": "^1.20.2",
     "express": "^4.15.3",
+    "express-validator": "^3.2.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-babel-istanbul": "^1.6.0",
