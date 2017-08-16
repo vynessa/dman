@@ -81,7 +81,7 @@ describe('Users Controller Test suite', () => {
         .expect(400)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Invalid password');
+            assert(res.body.message === 'Incorrect email or password');
           }
           done();
         });
@@ -96,10 +96,10 @@ describe('Users Controller Test suite', () => {
           email: 'vanessa.wiliams@gmail.com',
           password: 'vanessa'
         })
-        .expect(404)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Sorry, the email does not exist!');
+            assert(res.body.message === 'Incorrect email or password');
           }
           done();
         });

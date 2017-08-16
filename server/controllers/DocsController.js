@@ -28,7 +28,9 @@ class DocsController {
         }
         return res.status(200).send(documents);
       })
-      .catch(error => res.status(401).send(error));
+      .catch(error => res.status(400)
+        .send(Helpers.errorReporter(error))
+      );
   }
 
   /**
@@ -42,30 +44,6 @@ class DocsController {
   static createDocument(req, res) {
     return Helpers.createDocument(req, res);
   }
-
-  // /**
-  //  * @description
-  //  * @static
-  //  * @param {object} req
-  //  * @param {object} res
-  //  * @returns {object} response
-  //  * @memberof UsersController
-  //  */
-  // static findDocument(req, res) {
-  //   if (!Number.isInteger(Number(req.params.id))) {
-  //     return Helpers.invalidDocIdMessage(res);
-  //   }
-  //   User.findById(req.params.id)
-  //     .then((user) => {
-  //       if (!user) {
-  //         return res.status(404).send({
-  //           message: 'User not found'
-  //         });
-  //       }
-  //       return res.status(200).send(user);
-  //     })
-  //     .catch(err => res.status(400).send(err));
-  // }
 
   /**
    * @description
@@ -83,41 +61,10 @@ class DocsController {
     //   const user = new User();
     //   req.body.password = user.generateHash(req.body.password);
     // }
-    return Document.findById(req.params.id)
-      .then((document) => {
-        // if (req.body.role) {
-        //   if (req.decoded.role !== 'admin') {
-        //     return res.status(401).send({
-        //       message: 'Unauthorized Access! Only Admin can Update Role'
-        //     });
-        //   }
-        // }
-        if (!document) {
-          return res.status(400).send({
-            message: 'Sorry, the document does not exist!'
-          });
-        }
-        if (Number(req.decoded.userId) !== Number(req.params.Id)) {
-          return res.status(401).send({
-            message: 'Unauthorized Access'
-          });
-        }
-        return document
-          .update(req.body, { fields: Object.keys(req.body) })
-          .then(() =>
-            res.status(200).send({
-              message: 'Document Successfully Updated',
-              user: {
-                title: document.title,
-                content: document.content,
-                owner: document.owner,
-                accessType: document.accessType
-              }
-            })
-          )
-          .catch(error => res.status(400).send(error));
-      })
-      .catch(error => res.status(400).send(error));
+    return Helpers.updateDocument(req, res)
+    .catch(error =>
+      res.status(400).send(Helpers.errorReporter(error))
+    );
   }
 
   /**
@@ -152,7 +99,9 @@ class DocsController {
             message: 'Document not found! :('
           });
         })
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(400)
+          .send(Helpers.errorReporter(error))
+        );
     }
     return res.status(401).send({
       message: 'Unauthorized access! Only an admin can delete a document.'
