@@ -1,5 +1,6 @@
 import express from 'express';
 import logger from 'morgan';
+import expressValidator from 'express-validator';
 import bodyParser from 'body-parser';
 import verifyToken from './middlewares/auth';
 import router from './routes/router';
@@ -11,6 +12,7 @@ app.use(logger('dev'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(expressValidator());
 
 app.use('/api/v1', verifyToken);
 app.use(router);

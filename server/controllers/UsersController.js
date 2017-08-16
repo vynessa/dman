@@ -13,6 +13,11 @@ class UsersController {
    * @memberof UsersController
    */
   static registerUser(req, res) {
+    req.check('email', 'Email is required').notEmpty();
+    const errors = req.validationErrors();
+    if (errors) {
+      return res.status(400).send(errors);
+    }
     User.find({
       where: {
         email: req.body.email
@@ -27,7 +32,13 @@ class UsersController {
           message: 'This user already exists!'
         });
       })
-      .catch(error => res.status(400).send({ message: Helpers.errorReporter(error) })
+      .catch((error) => {
+        console.log(error)
+        if (error.name === 'SequelizeValidationError') {
+          res.status(400).send({ errorReport: Helpers.errorReporter(error) });
+        }
+        res.status(400).send(error);
+      }
     );
   }
 
