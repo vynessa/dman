@@ -19,38 +19,7 @@ describe('Set Document controller for test', () => {
       restartIdentity: true
     }).then((err) => {
       if (!err) {
-        Document.destroy({
-          where: {},
-          truncate: true,
-          cascade: true,
-          restartIdentity: true
-        }).then((err) => {
-          if (!err) {
-            Role.destroy({
-              where: {},
-              truncate: true,
-              cascade: true,
-              restartIdentity: true
-            });
-            Role.bulkCreate([
-              {
-                role: 'admin',
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                role: 'user',
-                createdAt: new Date(),
-                updatedAt: new Date()
-              },
-              {
-                role: 'editor',
-                createdAt: new Date(),
-                updatedAt: new Date()
-              }
-            ]);
-          }
-        });
+        //
       }
       done();
     });
@@ -67,6 +36,50 @@ describe('Set Document controller for test', () => {
 });
 
 describe('Document Controller Test Suite', () => {
+  describe('Set Document controller for test', () => {
+    Document.destroy({
+      where: {},
+      truncate: true,
+      cascade: true,
+      restartIdentity: true
+    }).then((err) => {
+      if (!err) {
+        Role.destroy({
+          where: {},
+          truncate: true,
+          cascade: true,
+          restartIdentity: true
+        });
+        Role.bulkCreate([
+          {
+            role: 'admin',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            role: 'user',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            role: 'editor',
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ]);
+      }
+    });
+    const set = true;
+    it('set should be true', () => {
+      if (set) {
+        assert.isDefined(set, 'test is ready');
+      } else {
+        const error = new Error('test is not ready');
+        assert.ifError(error);
+      }
+    });
+  });
+
   describe('Set Document controller for test', () => {
     beforeEach(() => {
       const user = new User();

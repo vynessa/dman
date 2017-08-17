@@ -137,7 +137,15 @@ class UsersController {
             message: 'User not found'
           });
         }
-        return res.status(200).send(user);
+        return res.status(200).send({
+          user: {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            createdAt: user.createdAt
+          }
+        });
       })
       .catch(error => res.status(400).send(error));
   }
@@ -158,15 +166,15 @@ class UsersController {
       const user = new User();
       req.body.password = user.generateHash(req.body.password);
     }
-    return Helpers.updateUser()
+    return Helpers.updateUser(req, res)
     .catch(error => res.status(400).send(error));
   }
 
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */

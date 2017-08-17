@@ -27,6 +27,7 @@
             "MethodDefinition": true,
             "ClassDeclaration": true
         }
-    }]
+    }],
+    "max-len": [1, 80, 2]
   }
 }
