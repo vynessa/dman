@@ -15,13 +15,11 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env.DB_PORT, {
+  sequelize = new Sequelize(process.env.DB_URL, {
     dialect: 'postgres'
   });
 } else {
-  sequelize = new Sequelize(process.env.DB_PORT, {
-    dialect: 'postgres'
-  });
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
 fs

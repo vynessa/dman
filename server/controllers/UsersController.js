@@ -13,11 +13,6 @@ class UsersController {
    * @memberof UsersController
    */
   static registerUser(req, res) {
-    req.check('email', 'Email is required').notEmpty();
-    const errors = req.validationErrors();
-    if (errors) {
-      return res.status(400).send(errors);
-    }
     User.find({
       where: {
         email: req.body.email
@@ -32,14 +27,7 @@ class UsersController {
           message: 'This user already exists!'
         });
       })
-      .catch((error) => {
-        console.log(error)
-        if (error.name === 'SequelizeValidationError') {
-          res.status(400).send({ errorReport: Helpers.errorReporter(error) });
-        }
-        res.status(400).send(error);
-      }
-    );
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -85,7 +73,7 @@ class UsersController {
           }
         });
       })
-      .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -127,7 +115,7 @@ class UsersController {
     }
     User.findAll()
       .then(users => res.status(200).send(users))
-      .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -151,7 +139,7 @@ class UsersController {
         }
         return res.status(200).send(user);
       })
-      .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -171,7 +159,7 @@ class UsersController {
       req.body.password = user.generateHash(req.body.password);
     }
     return Helpers.updateUser()
-    .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+    .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -197,13 +185,13 @@ class UsersController {
                   message: 'Yipee! User deleted successfully!'
                 })
             )
-            .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+            .catch(error => res.status(400).send(error));
           }
           return res.status(404).send({
             message: 'User not found! :('
           });
         })
-        .catch(error => res.status(400).send(Helpers.errorReporter(error)));
+        .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
       message: 'Unathuorized Access! Only an admin can delete a user. ¯¯|_(ツ)_|¯¯'

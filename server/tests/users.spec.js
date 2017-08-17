@@ -14,7 +14,7 @@ describe('Users Controller Test suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        email: 'inftttttttt@admin.com',
+        email: 'info@admin.com',
         password: 'adminhere'
       })
       .expect(200)
@@ -26,7 +26,7 @@ describe('Users Controller Test suite', () => {
           role = res.body.role;
         }
         done();
-      }, 500000);
+      });
   });
 
   describe('POST `/api/v1/users/auth/register`', () => {

@@ -29,7 +29,7 @@ class DocsController {
         return res.status(200).send(documents);
       })
       .catch(error => res.status(400)
-        .send(Helpers.errorReporter(error))
+        .send(error)
       );
   }
 
@@ -57,13 +57,9 @@ class DocsController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.invalidDocIdMessage(res);
     }
-    // if (req.body.password) {
-    //   const user = new User();
-    //   req.body.password = user.generateHash(req.body.password);
-    // }
     return Helpers.updateDocument(req, res)
     .catch(error =>
-      res.status(400).send(Helpers.errorReporter(error))
+      res.status(error)
     );
   }
 
@@ -100,7 +96,7 @@ class DocsController {
           });
         })
         .catch(error => res.status(400)
-          .send(Helpers.errorReporter(error))
+          .send(error)
         );
     }
     return res.status(401).send({

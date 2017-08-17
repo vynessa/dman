@@ -31,10 +31,6 @@ describe('Set Document controller for test', () => {
               truncate: true,
               cascade: true,
               restartIdentity: true
-              // }).then((err) => {
-              //   if (!err) {
-              //     //
-              //   }
             });
             Role.bulkCreate([
               {
@@ -53,7 +49,6 @@ describe('Set Document controller for test', () => {
                 updatedAt: new Date()
               }
             ]);
-            // Create new instance of user
           }
         });
       }
@@ -80,8 +75,6 @@ describe('Document Controller Test Suite', () => {
         email: 'info@admin.com',
         role: 'admin',
         password: user.generateHash('adminhere')
-      }).then((response) => {
-        //
       });
       token = jwt.sign(
         {

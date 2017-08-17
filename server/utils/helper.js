@@ -166,7 +166,7 @@ class Helpers {
 
   /**
    * @description
-   * @param {any} res
+   * @param {any} response
    * @returns {object} response
    * @memberof Helpers
    */
@@ -178,7 +178,7 @@ class Helpers {
 
   /**
    * @description
-   * @param {any} res
+   * @param {any} response
    * @returns {object} response
    * @memberof Helpers
    */
@@ -188,18 +188,6 @@ class Helpers {
     });
   }
 
-  /**
-   * Get errors
-   * @param {Array} error client side errors
-   * @returns {Array} return user's attributes
-   */
-  static errorReporter(error) {
-    const errorReport = [];
-    error.errors.forEach((err) => {
-      errorReport.push({ path: err.path, message: err.message });
-    });
-    return errorReport;
-  }
 }
 
 export default Helpers;
