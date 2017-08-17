@@ -1,5 +1,5 @@
 import Helpers from '../utils/helper';
-import { User } from '../models';
+import { User, Document } from '../models';
 
 /**
  * @class UsersController
@@ -27,7 +27,7 @@ class UsersController {
           message: 'This user already exists!'
         });
       })
-      .catch(err => res.status(500).send(err));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -46,9 +46,9 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(401).send({
+          return res.status(400).send({
             success: false,
-            message: 'Sorry, the email does not exist!'
+            message: 'Incorrect email or password'
           });
         }
         const user = new User();
@@ -57,8 +57,8 @@ class UsersController {
           returningUser.password
         );
         if (!checkPassword) {
-          return res.status(401).send({
-            message: 'Invalid password'
+          return res.status(400).send({
+            message: 'Incorrect email or password'
           });
         }
         const token = user.generateJWT(returningUser.id, returningUser.role);
@@ -73,7 +73,7 @@ class UsersController {
           }
         });
       })
-      .catch(err => res.status(401).send(err));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -115,7 +115,7 @@ class UsersController {
     }
     User.findAll()
       .then(users => res.status(200).send(users))
-      .catch(err => res.status(401).send(err));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -128,9 +128,7 @@ class UsersController {
    */
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid User ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     User.findById(req.params.id)
       .then((user) => {
@@ -141,7 +139,7 @@ class UsersController {
         }
         return res.status(200).send(user);
       })
-      .catch(err => res.status(401).send(err));
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -154,49 +152,14 @@ class UsersController {
    */
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid User ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     if (req.body.password) {
       const user = new User();
       req.body.password = user.generateHash(req.body.password);
     }
-    return User.findById(req.params.id)
-      .then((user) => {
-        if (req.body.role) {
-          if (req.decoded.role !== 'admin') {
-            return res.status(401).send({
-              message: 'Unauthorized Access, Only Admin can Update Role'
-            });
-          }
-        }
-        if (!user) {
-          return res.status(400).send({
-            message: 'Sorry, the user does not exist!'
-          });
-        }
-        if (Number(req.decoded.id) !== Number(req.params.id)) {
-          return res.status(401).send({
-            message: 'Unauthorized Access'
-          });
-        }
-        return user
-          .update(req.body, { fields: Object.keys(req.body) })
-          .then(() =>
-            res.status(200).send({
-              message: 'Account Successfully Updated',
-              user: {
-                name: user.fullName,
-                email: user.email,
-                role: user.role,
-                id: user.id
-              }
-            })
-          )
-          .catch(error => res.status(400).send(error));
-      })
-      .catch(error => res.status(401).send(error));
+    return Helpers.updateUser()
+    .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -209,9 +172,7 @@ class UsersController {
    */
   static deleteUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return res.status(400).send({
-        message: 'Invalid User ID'
-      });
+      return Helpers.invalidUserIdMessage(res);
     }
     if (Number(req.decoded.id) === Number(req.params.id)
       || req.decoded.role === 'admin') {
@@ -233,9 +194,10 @@ class UsersController {
         .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
-      message: 'Unathuorized Access! Only an admin can delete a user.'
+      message: 'Unathuorized Access! Only an admin can delete a user. ¯¯|_(ツ)_|¯¯'
     });
   }
+
 }
 
 export default UsersController;

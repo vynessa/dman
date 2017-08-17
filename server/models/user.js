@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     return jwt.sign({
       id,
       role,
-    }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    }, process.env.JWT_SECRET, { expiresIn: '72h' });
   };
 
   User.associate = (models) => {

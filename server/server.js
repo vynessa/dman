@@ -5,7 +5,7 @@ import verifyToken from './middlewares/auth';
 import router from './routes/router';
 
 const app = express();
-const port = 8000 || process.env.PORT;
+const port = process.env.PORT || 8000;
 
 app.use(logger('dev'));
 

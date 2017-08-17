@@ -8,16 +8,14 @@ import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
 
 const jasmineNodeOpts = {
-  timeout: 1000,
-  includeStackTrace: false,
+  timeout: 500000,
+  includeStackTrace: true,
   color: true
 };
 
 gulp.task('build', () => {
   gulp.src('server/**/*.js')
-    .pipe(babel({
-      presets: ['es2015', 'stage-0']
-    }))
+    .pipe(babel())
     .pipe(gulp.dest('build'));
 });
 
@@ -29,22 +27,22 @@ gulp.task('serve', () => {
 });
 
 gulp.task('test', () => {
-  gulp.src('./tests/**/*.js')
+  gulp.src('./server/tests/**/*.js')
     .pipe(babel())
     .pipe(jasmineNode(jasmineNodeOpts));
 });
 
 gulp.task('coverage', (cb) => {
-  gulp.src('server/**/*.js')
+  gulp.src('build/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('tests/**/*.js')
+      gulp.src(['./server/tests/**/*.js'])
         .pipe(babel())
         .pipe(injectModules())
         .pipe(jasmineNode())
         .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 10 } }))
+        .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))
         .on('end', cb)
         .pipe(exit());
     });
