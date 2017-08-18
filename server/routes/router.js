@@ -15,7 +15,8 @@ router.get('/api/v1/users', UsersController.getUsers)
   .post('/api/v1/users/auth/register', UsersController.registerUser)
   .post('/api/v1/users/auth/login', UsersController.loginUser)
   .put('/api/v1/users/:id', UsersController.updateUser)
-  .delete('/api/v1/users/:id', UsersController.deleteUser);
+  .delete('/api/v1/users/:id', UsersController.deleteUser)
+  .get('/api/v1/search/users', UsersController.searchUsers);
 
 // Documents endpoint
 router.get('/api/v1/documents', DocsController.getDocuments)

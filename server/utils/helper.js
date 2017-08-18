@@ -40,7 +40,6 @@ class Helpers {
       .catch(error => res.status(400).send(error));
   }
 
-
   /**
    * @description
    * @static
@@ -49,18 +48,10 @@ class Helpers {
    * @returns {object} user
    * @memberof Helpers
    */
-  static updateUser(req, res) {
-    return User.findById(req.params.id)
-    .then((user) => {
-      if (req.body.role) {
-        if (req.decoded.role !== 'admin') {
-          return res.status(401).send({
-            message: 'Unauthorized access! Only an admin can update roles'
-          });
-        }
-      }
+  static updateUserHelper(req, res) {
+    return User.findById(Math.abs(req.params.id)).then((user) => {
       if (!user) {
-        return res.status(400).send({
+        return res.status(404).send({
           message: 'Sorry, the user does not exist!'
         });
       }
@@ -73,7 +64,7 @@ class Helpers {
         .update(req.body, { fields: Object.keys(req.body) })
         .then(() =>
           res.status(200).send({
-            message: 'Account successfully updated',
+            message: 'Profile successfully updated',
             user: {
               name: user.fullName,
               email: user.email,
@@ -82,7 +73,12 @@ class Helpers {
             }
           })
         )
-        .catch(error => res.status(400).send(error));
+        .catch((error) => {
+          if (error.parent.code === '23505') {
+            res.status(409).send(error);
+          }
+          res.status(400).send(error);
+        });
     });
   }
 
@@ -94,7 +90,7 @@ class Helpers {
    * @returns {object} Document
    * @memberof Helpers
    */
-  static createDocument(req, res) {
+  static createDocumentHelper(req, res) {
     return Document.create({
       title: req.body.title,
       content: req.body.content,
@@ -127,22 +123,15 @@ class Helpers {
    * @returns {object} document
    * @memberof Helpers
    */
-  static updateDocument(req, res) {
-    return Document.findById(req.params.id)
-    .then((document) => {
-      if (req.body.role) {
-        if (req.decoded.role !== 'admin') {
-          return res.status(401).send({
-            message: 'Unauthorized Access! Only Admin can Update Role'
-          });
-        }
-      }
+  static updateDocumentHelper(req, res) {
+    return Document.findById(Math.abs(req.params.id)).then((document) => {
       if (!document) {
         return res.status(404).send({
           message: 'Sorry, the document does not exist!'
         });
       }
-      if (Number(req.decoded.userId) !== Number(req.params.Id)) {
+      if (
+        Number(req.decoded.id) !== Number(req.params.id)) {
         return res.status(401).send({
           message: 'Unauthorized Access'
         });
@@ -170,24 +159,11 @@ class Helpers {
    * @returns {object} response
    * @memberof Helpers
    */
-  static invalidDocIdMessage(response) {
+  static idValidator(response) {
     return response.status(400).send({
-      message: 'Invalid document ID. Please enter a valid ID'
+      message: 'Invalid ID. Please enter a valid ID'
     });
   }
-
-  /**
-   * @description
-   * @param {any} response
-   * @returns {object} response
-   * @memberof Helpers
-   */
-  static invalidUserIdMessage(response) {
-    return response.status(400).send({
-      message: 'Invalid user ID. Please enter a valid ID'
-    });
-  }
-
 }
 
 export default Helpers;
