@@ -10,24 +10,20 @@ import jwt from 'jsonwebtoken';
   * @return {object} - returns response status and json data
   */
 const verifyToken = (req, res, next) => {
-  // checking for token
-  if (req.url.startsWith('/users/auth')) return next();
+  if (req.url.startsWith('/users/auth') || req.url === '/') return next();
   if (!req.headers.authorization) {
     return res.status(400).json({
       message: 'Please set token in the header!'
     });
   }
   const token = req.headers.authorization;
-  // decoding the token
   if (token) {
-    // verifies secret and checks
     jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
       if (error) {
         return res.status(400).json({
           message: 'Invalid token. Please login :)'
         });
       }
-      // request user detail for other routes
       req.decoded = decoded;
       next();
     });
