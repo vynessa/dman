@@ -17,11 +17,6 @@ describe('Set Document controller for test', () => {
       truncate: true,
       cascade: true,
       restartIdentity: true
-    }).then((err) => {
-      if (!err) {
-        //
-      }
-      done();
     });
   });
   const set = true;
@@ -36,7 +31,7 @@ describe('Set Document controller for test', () => {
 });
 
 describe('Document Controller Test Suite', () => {
-  describe('Set Document controller for test', () => {
+  describe('Set the Document controller for testing', () => {
     Document.destroy({
       where: {},
       truncate: true,
@@ -80,7 +75,7 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
-  describe('Set Document controller for test', () => {
+  describe('Documents Controller test suite', () => {
     beforeEach(() => {
       const user = new User();
       User.create({
@@ -95,7 +90,7 @@ describe('Document Controller Test Suite', () => {
           role: process.env.ADMINROLE
         },
         process.env.JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: '72h' }
       );
 
       api

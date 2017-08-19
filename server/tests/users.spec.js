@@ -85,7 +85,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with 400 when the password is incorrect', (done) => {
+    it('should respond with 403 when the password is incorrect', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -94,7 +94,7 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'hnbnhg'
         })
-        .expect(400)
+        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
@@ -103,7 +103,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with 400 if the email does not exist', (done) => {
+    it('should respond with 403 if the email does not exist', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -112,12 +112,11 @@ describe('Users Controller Test suite', () => {
           email: 'vanessa.wiliams@gmail.com',
           password: 'vanessa'
         })
-        .expect(400)
+        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(
-              res.body.message ===
-                'The email entered is not associated with any account'
+              res.body.message === 'Incorrect email or password'
             );
           }
           done();
@@ -126,7 +125,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('PUT `/api/v1/users/:id`', () => {
-    it('should respond 400 if id = ubbcb', (done) => {
+    it('should respond with 400 if id = ubbcb', (done) => {
       api
         .put('/api/v1/users/ubbcb')
         .set('Authorization', `${token}`)
@@ -141,7 +140,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           } else {
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s details update failed!');
             assert.ifError(error);
           }
           done();
@@ -164,14 +163,14 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access');
           } else {
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s details update failed!');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond ok if a user updates his/her profile', (done) => {
+    it('should respond with ok if a user updates his/her profile', (done) => {
       api
         .put('/api/v1/users/1')
         .set('Authorization', `${token}`)
@@ -186,7 +185,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Profile successfully updated');
           } else {
-            const error = new Error("User's details update failed!");
+            const error = new Error('Profile update failed!');
             assert.ifError(error);
           }
           done();
@@ -217,7 +216,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/createuser`', () => {
-    it('should respond ok if a user updates his/her profile', (done) => {
+    it('should create a user', (done) => {
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${token}`)
@@ -240,7 +239,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond ok if a user updates his/her profile', (done) => {
+    it('should respond with 401 if a user tries to create another user', (done) => {
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${userToken}`)
