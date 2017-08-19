@@ -40,6 +40,10 @@ describe('Users Controller Test suite', () => {
       .end((err, res) => {
         if (!err) {
           userToken = res.body.token;
+        } else {
+          console.log('--------------');
+          const error = new Error("User's details update failed!");
+          assert.ifError(error);
         }
         done();
       });
@@ -60,6 +64,10 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'This user already exists!');
+          } else {
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
+            assert.ifError(error);
           }
           done();
         });
@@ -80,6 +88,10 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Login successful! :)');
+          } else {
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
+            assert.ifError(error);
           }
           done();
         });
@@ -98,6 +110,10 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
+          } else {
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
+            assert.ifError(error);
           }
           done();
         });
@@ -115,9 +131,11 @@ describe('Users Controller Test suite', () => {
         .expect(403)
         .end((err, res) => {
           if (!err) {
-            assert(
-              res.body.message === 'Incorrect email or password'
-            );
+            assert(res.body.message === 'Incorrect email or password');
+          } else {
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
+            assert.ifError(error);
           }
           done();
         });
@@ -140,14 +158,15 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           } else {
-            const error = new Error('User\'s details update failed!');
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it("should respond unauthorized if a user tries to update another user's profile", (done) => {
+    it("should respond with `unauthorized` if a user tries to update another user's profile", (done) => {
       api
         .put('/api/v1/users/2')
         .set('Authorization', `${token}`)
@@ -163,14 +182,15 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access');
           } else {
-            const error = new Error('User\'s details update failed!');
+            console.log('--------------');
+            const error = new Error("User's details update failed!");
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond with ok if a user updates his/her profile', (done) => {
+    it('should respond ok if a user updates his/her profile', (done) => {
       api
         .put('/api/v1/users/1')
         .set('Authorization', `${token}`)
@@ -183,16 +203,18 @@ describe('Users Controller Test suite', () => {
         .expect(200)
         .end((err, res) => {
           if (!err) {
+            console.log('success', res.body);
             assert(res.body.message === 'Profile successfully updated');
           } else {
-            const error = new Error('Profile update failed!');
+            console.log(err);
+            const error = new Error("User's details update failed!");
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond ok if a user updates his/her profile', (done) => {
+    it('should respond with 404 if the user does not exist', (done) => {
       api
         .put('/api/v1/users/5')
         .set('Authorization', `${token}`)
@@ -207,6 +229,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Sorry, the user does not exist!');
           } else {
+            console.log(err);
             const error = new Error("User's details update failed!");
             assert.ifError(error);
           }
@@ -216,7 +239,8 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/createuser`', () => {
-    it('should create a user', (done) => {
+    it('should respond ok if a user is being created by an admin', (done) => {
+      console.log('token', token);
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${token}`)
@@ -230,7 +254,8 @@ describe('Users Controller Test suite', () => {
         .expect(201)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'User created successfully!');
+            console.log(res.body);
+            assert(res.body.user.email === 'femi@gmail.com');
           } else {
             const error = new Error('User registration failed!');
             assert.ifError(error);
@@ -239,7 +264,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with 401 if a user tries to create another user', (done) => {
+    it('should respond unauthorized when a user creates another user', (done) => {
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${userToken}`)

@@ -17,6 +17,8 @@ describe('Set Document controller for test', () => {
       truncate: true,
       cascade: true,
       restartIdentity: true
+    }).then((err) => {
+      done();
     });
   });
   const set = true;
@@ -90,7 +92,7 @@ describe('Document Controller Test Suite', () => {
           role: process.env.ADMINROLE
         },
         process.env.JWT_SECRET,
-        { expiresIn: '72h' }
+        { expiresIn: '24h' }
       );
 
       api
