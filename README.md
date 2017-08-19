@@ -18,7 +18,7 @@ dman is a full stack document management system which uses roles and priviledges
 * **[supertest](https://www.npmjs.com/package/supertest)** - Supertest is a framework used in testing API endpoints
 
 
-## Features
+### Features
 <ul>
 <li>Users can view documents based on access rights</li>
 <li>Users can search for documents based on access rights</li>
@@ -30,8 +30,7 @@ dman is a full stack document management system which uses roles and priviledges
 </ul>
 
 
-
-### Getting started with the project
+## Getting started with the project
   * Requirements
     - To run the app locally, have `node.js` installed
   * How to setup the project/Installation/Configuration
@@ -45,10 +44,10 @@ dman is a full stack document management system which uses roles and priviledges
 ## API Documentation
 The API has routes, each dedicated to a single task that uses HTTP response codes to indicate request success or errors. The full document can be found [here](https://dman.herokuapp.com)
 
-### Naming conventions
+## Naming conventions
 * Visit the [Wiki](https://github.com/vynessa/dman/wiki) to find branch, commit messages and pull request naming conventions.
 
-### Contributing to the project
+## Contributing to the project
 * Fork this repository to your github account
 * Clone the repository -  `git clone https://github.com/vynessa/dman.git`
 * Create your feature branch - `git checkout -b your-branch-name`
@@ -60,7 +59,7 @@ Click this link to visit the hosted app [dman](https://dman.herokuapp.com)
 
 I look forward to your pull requests :)
 
-### License
+## License
 MIT License
 
 Copyright (c) 2017 Vanessa Ejikeme
