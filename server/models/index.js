@@ -18,11 +18,10 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(process.env.DB_URL, {
     dialect: 'postgres'
   });
-} else {
-  sequelize = new Sequelize(process.env.DB_URL, {
-    dialect: 'postgres'
-  });
 }
+sequelize = new Sequelize(process.env.DB_URL, {
+  dialect: 'postgres'
+});
 
 fs
   .readdirSync(__dirname)
