@@ -14,7 +14,7 @@ class Helpers {
    * @returns {object} User
    * @memberof Helpers
    */
-  static createUser(req, res) {
+  static createUserHelper(req, res) {
     const user = new User();
     return User.create({
       fullName: req.body.fullName,
@@ -25,10 +25,8 @@ class Helpers {
       .then((newUser) => {
         const token = user.generateJWT(newUser.id, newUser.role);
         res.status(201).send({
-          success: true,
-          message: 'User created successfully!',
+          token,
           user: {
-            token,
             id: newUser.id,
             fullName: newUser.fullName,
             email: newUser.email,

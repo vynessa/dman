@@ -20,14 +20,14 @@ class UsersController {
     })
       .then((user) => {
         if (!user) {
-          return Helpers.createUser(req, res);
+          return Helpers.createUserHelper(req, res);
         }
         return res.status(409).send({
           success: false,
           message: 'This user already exists!'
         });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -46,9 +46,8 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(400).send({
-            success: false,
-            message: 'The email entered is not associated with any account'
+          return res.status(403).send({
+            message: 'Incorrect email or password'
           });
         }
         const user = new User();
@@ -57,23 +56,22 @@ class UsersController {
           returningUser.password
         );
         if (!checkPassword) {
-          return res.status(400).send({
+          return res.status(403).send({
             message: 'Incorrect email or password'
           });
         }
         const token = user.generateJWT(returningUser.id, returningUser.role);
         return res.status(200).send({
-          success: true,
           message: 'Login successful! :)',
           token,
-          userDetails: {
+          user: {
             name: returningUser.fullName,
             id: returningUser.id,
             role: returningUser.role
           }
         });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -183,7 +181,7 @@ class UsersController {
     const user = new User();
     req.body.password = user.generateHash(req.body.password);
     return Helpers.updateUserHelper(req, res)
-    .catch(error => res.status(400).send(error));
+    .catch(error => res.status(500).send(error));
   }
 
   /**
