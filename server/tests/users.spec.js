@@ -5,7 +5,7 @@ import { User } from '../models';
 
 const api = request(app);
 
-let token, userToken, role, fullName, email, password;
+let token, userToken, invalidToken, role, fullName, email, password;
 
 describe('Users Controller Test suite', () => {
   beforeEach((done) => {
@@ -40,17 +40,29 @@ describe('Users Controller Test suite', () => {
       .end((err, res) => {
         if (!err) {
           userToken = res.body.token;
-        } else {
-          console.log('--------------');
-          const error = new Error("User's details update failed!");
-          assert.ifError(error);
         }
         done();
       });
   });
 
+  describe('GET `/api/v1/`', () => {
+    it('should respond with a welcome message', (done) => {
+      api
+        .get('/api/v1/')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Welcome to the dMan API!');
+          }
+          done();
+        });
+    });
+  });
+
   describe('POST `/api/v1/users/auth/register`', () => {
-    it('should respond with an error if the email exists', (done) => {
+    it('should respond with `conflict` error if the email exists', (done) => {
       api
         .post('/api/v1/users/auth/register')
         .set('Accept', 'application/json')
@@ -65,8 +77,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'This user already exists!');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('Registration error');
             assert.ifError(error);
           }
           done();
@@ -75,7 +86,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/auth/login`', () => {
-    it('should respond with ok when a user is successfully logged in', (done) => {
+    it('should respond with `OK` when a user is successfully logged in', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -89,15 +100,14 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Login successful! :)');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('Login error');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond with 403 when the password is incorrect', (done) => {
+    it('should respond with `Forbidden` when the password is incorrect', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -111,15 +121,14 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('Login error');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond with 403 if the email does not exist', (done) => {
+    it('should respond with `Forbidden` if the email does not exist', (done) => {
       api
         .post('/api/v1/users/auth/login')
         .set('Accept', 'application/json')
@@ -133,8 +142,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('Login error');
             assert.ifError(error);
           }
           done();
@@ -143,7 +151,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('PUT `/api/v1/users/:id`', () => {
-    it('should respond with 400 if id = ubbcb', (done) => {
+    it('should respond with `Bad request` if the id equals a non-integer', (done) => {
       api
         .put('/api/v1/users/ubbcb')
         .set('Authorization', `${token}`)
@@ -158,15 +166,14 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s profile update failed!');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it("should respond with `unauthorized` if a user tries to update another user's profile", (done) => {
+    it("should respond with `Unauthorized` if a user tries to update another user's profile", (done) => {
       api
         .put('/api/v1/users/2')
         .set('Authorization', `${token}`)
@@ -180,17 +187,16 @@ describe('Users Controller Test suite', () => {
         .expect(401)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Unauthorized access');
+            assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
           } else {
-            console.log('--------------');
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s profile update failed!');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond ok if a user updates his/her profile', (done) => {
+    it('should respond with `OK` if a user updates his/her profile', (done) => {
       api
         .put('/api/v1/users/1')
         .set('Authorization', `${token}`)
@@ -203,18 +209,16 @@ describe('Users Controller Test suite', () => {
         .expect(200)
         .end((err, res) => {
           if (!err) {
-            console.log('success', res.body);
             assert(res.body.message === 'Profile successfully updated');
           } else {
-            console.log(err);
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s profile update failed!');
             assert.ifError(error);
           }
           done();
         });
     });
 
-    it('should respond with 404 if the user does not exist', (done) => {
+    it('should respond with `Not found` if the user does not exist', (done) => {
       api
         .put('/api/v1/users/5')
         .set('Authorization', `${token}`)
@@ -229,8 +233,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Sorry, the user does not exist!');
           } else {
-            console.log(err);
-            const error = new Error("User's details update failed!");
+            const error = new Error('User\'s profile update failed!');
             assert.ifError(error);
           }
           done();
@@ -239,8 +242,9 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('POST `/api/v1/users/createuser`', () => {
-    it('should respond ok if a user is being created by an admin', (done) => {
-      console.log('token', token);
+    invalidToken = 'hscuftcbcjk';
+
+    it('should respond with `OK` if a user is being created by an admin', (done) => {
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${token}`)
@@ -254,7 +258,6 @@ describe('Users Controller Test suite', () => {
         .expect(201)
         .end((err, res) => {
           if (!err) {
-            console.log(res.body);
             assert(res.body.user.email === 'femi@gmail.com');
           } else {
             const error = new Error('User registration failed!');
@@ -264,7 +267,52 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond unauthorized when a user creates another user', (done) => {
+    it('should respond with `Bad request` if an invalid token is being set', (done) => {
+      api
+        .post('/api/v1/users/createuser')
+        .set('Authorization', `${invalidToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Femi Medale',
+          email: 'femi@gmail.com',
+          password: 'fems'
+        })
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Invalid token. Please login :)');
+          } else {
+            const error = new Error('User registration failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Unauthorized` if no token is being set', (done) => {
+      api
+        .post('/api/v1/users/createuser')
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Femi Medale',
+          email: 'femi@gmail.com',
+          password: 'fems'
+        })
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set token in the header!');
+          } else {
+            const error = new Error('User registration failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Unauthorized` when a user creates another user', (done) => {
       api
         .post('/api/v1/users/createuser')
         .set('Authorization', `${userToken}`)
@@ -280,7 +328,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(
               res.body.message ===
-                'Unathorized access! Only an Admin can create a user'
+                'Unathorized access! Only an admin can create a user'
             );
           } else {
             const error = new Error('User registration failed!');
@@ -292,7 +340,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('GET `/api/v1/users/`', () => {
-    it('should respond ok if users are found in the database', (done) => {
+    it('should respond with `OK` if users are found in the database', (done) => {
       api
         .get('/api/v1/users/')
         .set('Authorization', `${token}`)
@@ -303,7 +351,211 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.users.length >= 1);
           } else {
-            const error = new Error('User registration failed!');
+            const error = new Error('Database error');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Unauthorized` if a user queries all users', (done) => {
+      api
+        .get('/api/v1/users/')
+        .set('Authorization', `${userToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Unauthorized access! All users can only be viewed by an admin');
+          } else {
+            const error = new Error('Database error');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+  });
+
+  describe('GET `/api/v1/users/:id`', () => {
+    it('should respond with `OK` if a user is found in the database', (done) => {
+      api
+      .get('/api/v1/users/1')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.user.id === 1);
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `OK` if the query parameter is a negative integer', (done) => {
+      api
+      .get('/api/v1/users/-1')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.user.id === 1);
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the user does not exist', (done) => {
+      api
+      .get('/api/v1/users/78')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'User not found!');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if the id equals a non-integer', (done) => {
+      api
+      .get('/api/v1/users/vgcrexe')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+  });
+
+  describe('GET `/api/v1/search/users`', () => {
+    it('should respond with `OK` if the search query returns one or more user', (done) => {
+      api
+      .get('/api/v1/search/users/?q=femi')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'User found successfully');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the query returns no user', (done) => {
+      api
+      .get('/api/v1/search/users/?q=queen')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'This user does not exist');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+  });
+
+  describe('DELETE `/api/v1/users/:id`', () => {
+    it('should respond with `Bad request` if the id equals a non-integer', (done) => {
+      api
+      .delete('/api/v1/users/vgcrexe')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `OK` if a user is deleted successfully', (done) => {
+      api
+      .delete('/api/v1/users/3')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Yipee! User deleted successfully!');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the user to be deleted does not exist', (done) => {
+      api
+      .delete('/api/v1/users/78')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'User not found! :(');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Unauthorized` if a user tries to delete another user', (done) => {
+      api
+        .delete('/api/v1/users/1')
+        .set('Authorization', `${userToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(401)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Unathuorized Access! ¯¯|_(ツ)_|¯¯');
+          } else {
+            const error = new Error('Database error');
             assert.ifError(error);
           }
           done();
