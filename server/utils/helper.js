@@ -9,12 +9,12 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} User
    * @memberof Helpers
    */
-  static createUser(req, res) {
+  static createUserHelper(req, res) {
     const user = new User();
     return User.create({
       fullName: req.body.fullName,
@@ -25,10 +25,8 @@ class Helpers {
       .then((newUser) => {
         const token = user.generateJWT(newUser.id, newUser.role);
         res.status(201).send({
-          success: true,
-          message: 'User created successfully!',
+          token,
           user: {
-            token,
             id: newUser.id,
             fullName: newUser.fullName,
             email: newUser.email,
@@ -40,61 +38,57 @@ class Helpers {
       .catch(error => res.status(400).send(error));
   }
 
-
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} user
    * @memberof Helpers
    */
-  static updateUser(req, res) {
-    return User.findById(req.params.id)
-    .then((user) => {
-      if (req.body.role) {
-        if (req.decoded.role !== 'admin') {
-          return res.status(401).send({
-            message: 'Unauthorized access! Only an admin can update roles'
-          });
-        }
-      }
+  static updateUserHelper(req, res) {
+    return User.findById(Math.abs(req.params.id)).then((user) => {
       if (!user) {
-        return res.status(400).send({
+        return res.status(404).send({
           message: 'Sorry, the user does not exist!'
         });
       }
       if (Number(req.decoded.id) !== Number(req.params.id)) {
         return res.status(401).send({
-          message: 'Unauthorized access'
+          message: 'Unauthorized access ¯¯|_(ツ)_|¯¯'
         });
       }
       return user
         .update(req.body, { fields: Object.keys(req.body) })
         .then(() =>
           res.status(200).send({
-            message: 'Account successfully updated',
+            message: 'Profile successfully updated',
             user: {
               name: user.fullName,
               email: user.email,
-              role: user.role,
-              id: user.id
+              id: user.id,
+              role: user.role
             }
           })
         )
-        .catch(error => res.status(400).send(error));
+        .catch((error) => {
+          if (error.parent.code === '23505') {
+            res.status(409).send(error);
+          }
+          res.status(400).send(error);
+        });
     });
   }
 
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} Document
    * @memberof Helpers
    */
-  static createDocument(req, res) {
+  static createDocumentHelper(req, res) {
     return Document.create({
       title: req.body.title,
       content: req.body.content,
@@ -104,7 +98,6 @@ class Helpers {
     })
       .then(document =>
         res.status(201).send({
-          success: true,
           message: 'Document created successfully',
           document: {
             title: document.title,
@@ -122,72 +115,51 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} document
    * @memberof Helpers
    */
-  static updateDocument(req, res) {
-    return Document.findById(req.params.id)
-    .then((document) => {
-      if (req.body.role) {
-        if (req.decoded.role !== 'admin') {
-          return res.status(401).send({
-            message: 'Unauthorized Access! Only Admin can Update Role'
-          });
-        }
-      }
+  static updateDocumentHelper(req, res) {
+    return Document.findById(Math.abs(req.params.id)).then((document) => {
       if (!document) {
         return res.status(404).send({
           message: 'Sorry, the document does not exist!'
         });
       }
-      if (Number(req.decoded.userId) !== Number(req.params.Id)) {
-        return res.status(401).send({
-          message: 'Unauthorized Access'
-        });
+      if (Number(req.decoded.id) !== Number(req.params.id)) {
+        return document
+          .update(req.body, { fields: Object.keys(req.body) })
+          .then(() =>
+            res.status(200).send({
+              message: 'Document Successfully Updated',
+              user: {
+                title: document.title,
+                content: document.content,
+                owner: document.owner,
+                accessType: document.accessType
+              }
+            })
+          )
+          .catch(error => res.status(400).send(error));
       }
-      return document
-        .update(req.body, { fields: Object.keys(req.body) })
-        .then(() =>
-          res.status(200).send({
-            message: 'Document Successfully Updated',
-            user: {
-              title: document.title,
-              content: document.content,
-              owner: document.owner,
-              accessType: document.accessType
-            }
-          })
-        )
-        .catch(error => res.status(400).send(error));
+      return res.status(401).send({
+        message: 'Unauthorized Access ¯¯|_(ツ)_|¯¯'
+      });
     });
   }
 
   /**
    * @description
-   * @param {any} response
+   * @param {object} response
    * @returns {object} response
    * @memberof Helpers
    */
-  static invalidDocIdMessage(response) {
+  static idValidator(response) {
     return response.status(400).send({
-      message: 'Invalid document ID. Please enter a valid ID'
+      message: 'Invalid ID. Please enter a valid ID'
     });
   }
-
-  /**
-   * @description
-   * @param {any} response
-   * @returns {object} response
-   * @memberof Helpers
-   */
-  static invalidUserIdMessage(response) {
-    return response.status(400).send({
-      message: 'Invalid user ID. Please enter a valid ID'
-    });
-  }
-
 }
 
 export default Helpers;

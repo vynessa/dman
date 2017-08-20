@@ -14,11 +14,6 @@ class DocsController {
    * @memberof DocsController
    */
   static getDocuments(req, res) {
-    if (req.decoded.role !== 'admin') {
-      return res.status(401).send({
-        message: 'Unauthorized access! All documents can only be viewed by an admin'
-      });
-    }
     Document.findAll()
       .then((documents) => {
         if (documents.length === 0) {
@@ -42,7 +37,7 @@ class DocsController {
    * @memberof DocsController
    */
   static createDocument(req, res) {
-    return Helpers.createDocument(req, res);
+    return Helpers.createDocumentHelper(req, res);
   }
 
   /**
@@ -55,9 +50,9 @@ class DocsController {
    */
   static updateDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.invalidDocIdMessage(res);
+      return Helpers.idValidator(res);
     }
-    return Helpers.updateDocument(req, res)
+    return Helpers.updateDocumentHelper(req, res)
     .catch(error =>
       res.status(error)
     );
@@ -73,13 +68,13 @@ class DocsController {
    */
   static deleteDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.invalidDocIdMessage(res);
+      return Helpers.idValidator(res);
     }
     if (
       Number(req.decoded.id) === Number(req.params.userId) ||
       req.decoded.role === 'admin'
     ) {
-      return Document.findById(req.params.id)
+      return Document.findById(Math.abs(req.params.id))
         .then((document) => {
           if (document) {
             return document

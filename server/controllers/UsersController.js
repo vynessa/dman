@@ -7,8 +7,8 @@ import { User, Document } from '../models';
 class UsersController {
   /**
    * @description
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {void}
    * @memberof UsersController
    */
@@ -20,21 +20,21 @@ class UsersController {
     })
       .then((user) => {
         if (!user) {
-          return Helpers.createUser(req, res);
+          return Helpers.createUserHelper(req, res);
         }
         return res.status(409).send({
           success: false,
           message: 'This user already exists!'
         });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {void}
    * @memberof UsersController
    */
@@ -46,8 +46,7 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(400).send({
-            success: false,
+          return res.status(403).send({
             message: 'Incorrect email or password'
           });
         }
@@ -57,30 +56,29 @@ class UsersController {
           returningUser.password
         );
         if (!checkPassword) {
-          return res.status(400).send({
+          return res.status(403).send({
             message: 'Incorrect email or password'
           });
         }
         const token = user.generateJWT(returningUser.id, returningUser.role);
         return res.status(200).send({
-          success: true,
           message: 'Login successful! :)',
           token,
-          userDetails: {
+          user: {
             name: returningUser.fullName,
             id: returningUser.id,
             role: returningUser.role
           }
         });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */
@@ -89,14 +87,11 @@ class UsersController {
       if (req.decoded.role === 'user') {
         return res.status(401).send({
           success: false,
-          message: 'Unathorized access! Only an Admin can create a user'
+          message: 'Unathorized access! Only an admin can create a user'
         });
       }
       return UsersController.registerUser(req, res);
     }
-    return res.status(400).send({
-      message: 'Please set token in the header'
-    });
   }
 
   /**
@@ -113,8 +108,18 @@ class UsersController {
         message: 'Unauthorized access! All users can only be viewed by an admin'
       });
     }
-    User.findAll()
-      .then(users => res.status(200).send(users))
+    const query = {
+      attributes: ['fullName', 'id', 'role', 'createdAt']
+    };
+    User.findAll(query)
+      .then((users) => {
+        if (users.length === 0) {
+          return res.status(404).send({
+            message: 'No users found!'
+          });
+        }
+        res.status(200).json({ message: 'All users found', users });
+      })
       .catch(error => res.status(400).send(error));
   }
 
@@ -128,13 +133,13 @@ class UsersController {
    */
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.invalidUserIdMessage(res);
+      return Helpers.idValidator(res);
     }
-    User.findById(req.params.id)
+    User.findById(Math.abs(req.params.id))
       .then((user) => {
         if (!user) {
           return res.status(404).send({
-            message: 'User not found'
+            message: 'User not found!'
           });
         }
         return res.status(200).send({
@@ -153,21 +158,30 @@ class UsersController {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} response
+   * @memberof UsersController
+   */
+  static updateUserRole(req, res) {
+  }
+
+  /**
+   * @description
+   * @static
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.invalidUserIdMessage(res);
+      return Helpers.idValidator(res);
     }
-    if (req.body.password) {
-      const user = new User();
-      req.body.password = user.generateHash(req.body.password);
-    }
-    return Helpers.updateUser(req, res)
-    .catch(error => res.status(400).send(error));
+    const user = new User();
+    req.body.password = user.generateHash(req.body.password);
+    return Helpers.updateUserHelper(req, res)
+    .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -180,11 +194,11 @@ class UsersController {
    */
   static deleteUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.invalidUserIdMessage(res);
+      return Helpers.idValidator(res);
     }
     if (Number(req.decoded.id) === Number(req.params.id)
       || req.decoded.role === 'admin') {
-      return User.findById(req.params.id)
+      return User.findById(Math.abs(req.params.id))
         .then((user) => {
           if (user) {
             return user.destroy().then(() => res
@@ -202,10 +216,42 @@ class UsersController {
         .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
-      message: 'Unathuorized Access! Only an admin can delete a user. ¯¯|_(ツ)_|¯¯'
+      message: 'Unathuorized Access! ¯¯|_(ツ)_|¯¯'
     });
   }
 
+  /**
+   * description searchUsers: Search for a particular user
+   * @static
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} user
+   * @memberof UsersController
+   */
+  static searchUsers(req, res) {
+    const searchString = req.query.q.trim();
+    const query = {
+      where: {
+        fullName: { $ilike: `%${searchString}%` }
+      },
+      attributes: ['fullName', 'email', 'id']
+    };
+    if (req.decoded.role === 'admin') {
+      return User
+      .findAll(query)
+      .then((user) => {
+        if (user[0] === undefined) {
+          return res.status(404).send({ message: 'User not found!' });
+        }
+        const message = 'User found successfully';
+        return res.status(200).json({ message, user });
+      })
+      .catch(error => res.status(400).send(error));
+    }
+    return res.status(401).send({
+      message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
+    });
+  }
 }
 
 export default UsersController;
