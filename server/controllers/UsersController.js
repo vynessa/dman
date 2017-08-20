@@ -7,8 +7,8 @@ import { User, Document } from '../models';
 class UsersController {
   /**
    * @description
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {void}
    * @memberof UsersController
    */
@@ -33,8 +33,8 @@ class UsersController {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {void}
    * @memberof UsersController
    */
@@ -77,8 +77,8 @@ class UsersController {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */
@@ -158,8 +158,8 @@ class UsersController {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */
@@ -169,8 +169,8 @@ class UsersController {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} response
    * @memberof UsersController
    */
@@ -236,16 +236,21 @@ class UsersController {
       },
       attributes: ['fullName', 'email', 'id']
     };
-    User
+    if (req.decoded.role === 'admin') {
+      return User
       .findAll(query)
       .then((user) => {
         if (user[0] === undefined) {
-          return res.status(404).json({ message: 'This user does not exist' });
+          return res.status(404).send({ message: 'User not found!' });
         }
         const message = 'User found successfully';
         return res.status(200).json({ message, user });
       })
       .catch(error => res.status(400).send(error));
+    }
+    return res.status(401).send({
+      message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
+    });
   }
 }
 

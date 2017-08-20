@@ -340,7 +340,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('GET `/api/v1/users/`', () => {
-    it('should respond with `OK` if users are found in the database', (done) => {
+    it('should respond with `OK` if the admin queries the database for all users and one or more are found', (done) => {
       api
         .get('/api/v1/users/')
         .set('Authorization', `${token}`)
@@ -378,7 +378,7 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('GET `/api/v1/users/:id`', () => {
-    it('should respond with `OK` if a user is found in the database', (done) => {
+    it('should respond with `OK` if a user is found in the database by the id', (done) => {
       api
       .get('/api/v1/users/1')
       .set('Authorization', `${token}`)
@@ -396,7 +396,7 @@ describe('Users Controller Test suite', () => {
       });
     });
 
-    it('should respond with `OK` if the query parameter is a negative integer', (done) => {
+    it('should respond with `OK` if the id is a negative integer', (done) => {
       api
       .get('/api/v1/users/-1')
       .set('Authorization', `${token}`)
@@ -454,8 +454,8 @@ describe('Users Controller Test suite', () => {
   describe('GET `/api/v1/search/users`', () => {
     it('should respond with `OK` if the search query returns one or more user', (done) => {
       api
-      .get('/api/v1/search/users/?q=femi')
-      .set('Authorization', `${userToken}`)
+      .get('/api/v1/search/users/?q=admin')
+      .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
@@ -470,16 +470,34 @@ describe('Users Controller Test suite', () => {
       });
     });
 
+    it('should respond with `Unauthorized` if a user tries to search for another user', (done) => {
+      api
+      .get('/api/v1/search/users/?q=admin')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(401)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
     it('should respond with `Not found` if the query returns no user', (done) => {
       api
       .get('/api/v1/search/users/?q=queen')
-      .set('Authorization', `${userToken}`)
+      .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(404)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'This user does not exist');
+          assert(res.body.message === 'User not found!');
         } else {
           const error = new Error('Database error');
           assert.ifError(error);
