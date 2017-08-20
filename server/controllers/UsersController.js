@@ -87,7 +87,7 @@ class UsersController {
       if (req.decoded.role === 'user') {
         return res.status(401).send({
           success: false,
-          message: 'Unathorized access! Only an Admin can create a user'
+          message: 'Unathorized access! Only an admin can create a user'
         });
       }
       return UsersController.registerUser(req, res);
@@ -139,7 +139,7 @@ class UsersController {
       .then((user) => {
         if (!user) {
           return res.status(404).send({
-            message: 'User not found'
+            message: 'User not found!'
           });
         }
         return res.status(200).send({

@@ -55,7 +55,7 @@ class Helpers {
       }
       if (Number(req.decoded.id) !== Number(req.params.id)) {
         return res.status(401).send({
-          message: 'Unauthorized access'
+          message: 'Unauthorized access ¯¯|_(ツ)_|¯¯'
         });
       }
       return user
@@ -66,8 +66,8 @@ class Helpers {
             user: {
               name: user.fullName,
               email: user.email,
-              role: user.role,
-              id: user.id
+              id: user.id,
+              role: user.role
             }
           })
         )
@@ -98,7 +98,6 @@ class Helpers {
     })
       .then(document =>
         res.status(201).send({
-          success: true,
           message: 'Document created successfully',
           document: {
             title: document.title,
@@ -128,26 +127,25 @@ class Helpers {
           message: 'Sorry, the document does not exist!'
         });
       }
-      if (
-        Number(req.decoded.id) !== Number(req.params.id)) {
-        return res.status(401).send({
-          message: 'Unauthorized Access'
-        });
+      if (Number(req.decoded.id) !== Number(req.params.id)) {
+        return document
+          .update(req.body, { fields: Object.keys(req.body) })
+          .then(() =>
+            res.status(200).send({
+              message: 'Document Successfully Updated',
+              user: {
+                title: document.title,
+                content: document.content,
+                owner: document.owner,
+                accessType: document.accessType
+              }
+            })
+          )
+          .catch(error => res.status(400).send(error));
       }
-      return document
-        .update(req.body, { fields: Object.keys(req.body) })
-        .then(() =>
-          res.status(200).send({
-            message: 'Document Successfully Updated',
-            user: {
-              title: document.title,
-              content: document.content,
-              owner: document.owner,
-              accessType: document.accessType
-            }
-          })
-        )
-        .catch(error => res.status(400).send(error));
+      return res.status(401).send({
+        message: 'Unauthorized Access ¯¯|_(ツ)_|¯¯'
+      });
     });
   }
 
