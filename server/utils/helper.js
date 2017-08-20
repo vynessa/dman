@@ -9,8 +9,8 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} User
    * @memberof Helpers
    */
@@ -41,8 +41,8 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} user
    * @memberof Helpers
    */
@@ -83,8 +83,8 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} Document
    * @memberof Helpers
    */
@@ -115,8 +115,8 @@ class Helpers {
   /**
    * @description
    * @static
-   * @param {any} req
-   * @param {any} res
+   * @param {object} req
+   * @param {object} res
    * @returns {object} document
    * @memberof Helpers
    */
@@ -151,7 +151,7 @@ class Helpers {
 
   /**
    * @description
-   * @param {any} response
+   * @param {object} response
    * @returns {object} response
    * @memberof Helpers
    */

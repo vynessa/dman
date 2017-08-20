@@ -125,7 +125,6 @@ describe('Document Controller Test Suite', () => {
         .expect(404)
         .end((err, res) => {
           if (!err) {
-            console.log('No document', res.body);
             assert(res.body.message === 'No document found!');
           }
           done();
@@ -150,7 +149,6 @@ describe('Document Controller Test Suite', () => {
         .expect(201)
         .end((err, res) => {
           if (!err) {
-            console.log('One document', res.body);
             assert(res.body.message === 'Document created successfully');
           }
           done();
