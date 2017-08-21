@@ -244,22 +244,6 @@ describe('Document Controller Test Suite', () => {
         done();
       });
     });
-
-    // it('should return `Not found` if the id does not exist', (done) => {
-    //   api
-    //   .get('/api/v1/search/documents')
-    //   .set('Authorization', `${token}`)
-    //   .set('Accept', 'application/json')
-    //   .expect('Content-Type', /json/)
-    //   .expect(404)
-    //   .end((err, res) => {
-    //     console.log(res.body);
-    //     if (!err) {
-    //       assert(res.body.message === 'Document not found! :(');
-    //     }
-    //     done();
-    //   });
-    // });
   });
 
   describe('PUT `/api/v1/documents/:id`', () => {
