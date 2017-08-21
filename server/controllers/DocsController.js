@@ -23,9 +23,7 @@ class DocsController {
         }
         return res.status(200).send(documents);
       })
-      .catch(error => res.status(400)
-        .send(error)
-      );
+      .catch(error => res.status(400).send(error));
   }
 
   /**
@@ -90,13 +88,70 @@ class DocsController {
             message: 'Document not found! :('
           });
         })
-        .catch(error => res.status(400)
-          .send(error)
-        );
+        .catch(error => res.status(400).send(error));
     }
     return res.status(401).send({
       message: 'Unauthorized access! Only an admin can delete a document.'
     });
+  }
+
+  /**
+   * @description
+   * @static
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} document
+   * @memberof DocsController
+   */
+  static searchDocuments(req, res) {
+    if (!req.query.q) {
+      return res.status(400).send({
+        message: 'Please enter a keyword'
+      });
+    }
+    const searchString = Helpers.stringFilter(req.query.q);
+    let query;
+    if (req.decoded.role === 'admin') {
+      query = {
+        where: {
+          $and: [{
+            title: {
+              $ilike: `%${searchString}%`
+            },
+          }, {
+            accessType: [req.decoded.role, 'public', 'private']
+          }]
+        },
+        attributes: ['title', 'content', 'id', 'accessType', 'createdAt']
+      };
+    } else {
+      query = {
+        where: {
+          $and: [{
+            title: {
+              $ilike: `%${searchString}%`
+            }
+          },
+          {
+            accessType: [req.decoded.role, 'public']
+          }
+          ]
+        },
+        attributes: ['title', 'content', 'id', 'accessType', 'createdAt']
+      };
+    }
+    Document.findAll(query)
+      .then((document) => {
+        const message = 'Document found!';
+
+        if (document[0] === undefined) {
+          return res
+            .status(404)
+            .send({ message: 'This document does not exist!' });
+        }
+        return res.status(200).send({ message, document });
+      })
+      .catch(error => res.status(400).send(error));
   }
 }
 

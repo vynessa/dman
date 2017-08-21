@@ -23,7 +23,7 @@ class Helpers {
       password: user.generateHash(req.body.password)
     })
       .then((newUser) => {
-        const token = user.generateJWT(newUser.id, newUser.role);
+        const token = user.generateToken(newUser.id, newUser.role, newUser.fullName);
         res.status(201).send({
           token,
           user: {
@@ -51,6 +51,11 @@ class Helpers {
       if (!user) {
         return res.status(404).send({
           message: 'Sorry, the user does not exist!'
+        });
+      }
+      if (req.body.email === user.email) {
+        return res.status(409).send({
+          message: 'This email already exists!'
         });
       }
       if (Number(req.decoded.id) !== Number(req.params.id)) {
@@ -92,7 +97,7 @@ class Helpers {
     return Document.create({
       title: req.body.title,
       content: req.body.content,
-      owner: req.body.owner,
+      owner: req.decoded.fullName,
       accessType: req.body.accessType,
       userId: req.body.userId
     })
@@ -103,6 +108,7 @@ class Helpers {
             title: document.title,
             content: document.content,
             owner: document.owner,
+            documentId: document.id,
             accessType: document.accessType,
             userId: document.userId,
             createdAt: document.createdAt
@@ -159,6 +165,17 @@ class Helpers {
     return response.status(400).send({
       message: 'Invalid ID. Please enter a valid ID'
     });
+  }
+
+  /**
+   * @description
+   * @static
+   * @param {string} str
+   * @returns {string} str
+   * @memberof Helpers
+   */
+  static stringFilter(str) {
+    return str.trim().replace(/([^a-z A-Z 0-9]+)/g, '').toLowerCase();
   }
 }
 
