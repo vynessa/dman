@@ -22,6 +22,7 @@ router.get('/api/v1/users', UsersController.getUsers)
 router.get('/api/v1/documents', DocsController.getDocuments)
   .post('/api/v1/documents', DocsController.createDocument)
   .put('/api/v1/documents/:id', DocsController.updateDocument)
-  .delete('/api/v1/documents/:id', DocsController.deleteDocument);
+  .delete('/api/v1/documents/:id', DocsController.deleteDocument)
+  .get('/api/v1/search/documents', DocsController.searchDocuments);
 
 export default router;
