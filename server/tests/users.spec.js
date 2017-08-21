@@ -98,7 +98,7 @@ describe('Users Controller Test suite', () => {
         .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Login successful! :)');
+            assert(res.body.user.name === 'Admin');
           } else {
             const error = new Error('Login error');
             assert.ifError(error);
@@ -210,6 +210,27 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Profile successfully updated');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Conflict` if a user updates his/her email with an existing email', (done) => {
+      api
+        .put('/api/v1/users/1')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          email: 'info@admin.com',
+        })
+        .expect(409)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'This email already exists!');
           } else {
             const error = new Error('User\'s profile update failed!');
             assert.ifError(error);
@@ -452,6 +473,24 @@ describe('Users Controller Test suite', () => {
   });
 
   describe('GET `/api/v1/search/users`', () => {
+    it('should respond with `Bad request` if the query is empty', (done) => {
+      api
+      .get('/api/v1/search/users/?q=')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Please enter a keyword');
+        } else {
+          const error = new Error('Database error');
+          assert.ifError(error);
+        }
+        done();
+      });
+    });
+
     it('should respond with `OK` if the search query returns one or more user', (done) => {
       api
       .get('/api/v1/search/users/?q=admin')

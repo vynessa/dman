@@ -37,10 +37,11 @@ module.exports = (sequelize, DataTypes) => {
     return bcrypt.compareSync(password, savedPassword);
   };
 
-  User.prototype.generateJWT = (id, role) => {
+  User.prototype.generateToken = (id, role, fullName) => {
     return jwt.sign({
       id,
       role,
+      fullName
     }, process.env.JWT_SECRET, { expiresIn: '72h' });
   };
 

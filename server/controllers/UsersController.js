@@ -60,9 +60,8 @@ class UsersController {
             message: 'Incorrect email or password'
           });
         }
-        const token = user.generateJWT(returningUser.id, returningUser.role);
+        const token = user.generateToken(returningUser.id, returningUser.role, returningUser.fullName);
         return res.status(200).send({
-          message: 'Login successful! :)',
           token,
           user: {
             name: returningUser.fullName,
@@ -163,23 +162,19 @@ class UsersController {
    * @returns {object} response
    * @memberof UsersController
    */
-  static updateUserRole(req, res) {
-  }
-
-  /**
-   * @description
-   * @static
-   * @param {object} req
-   * @param {object} res
-   * @returns {object} response
-   * @memberof UsersController
-   */
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
     const user = new User();
-    req.body.password = user.generateHash(req.body.password);
+    if (req.body.password) {
+      req.body.password = user.generateHash(req.body.password);
+    }
+    if (req.body.role && req.decoded.role === 'user') {
+      return res.status(401).send({
+        message: 'Unauthorized access ¯¯|_(ツ)_|¯¯'
+      });
+    }
     return Helpers.updateUserHelper(req, res)
     .catch(error => res.status(500).send(error));
   }
@@ -229,24 +224,41 @@ class UsersController {
    * @memberof UsersController
    */
   static searchUsers(req, res) {
-    const searchString = req.query.q.trim();
+    const searchString = Helpers.stringFilter(req.query.q);
     const query = {
       where: {
-        fullName: { $ilike: `%${searchString}%` }
+        $or: [{
+          fullName: {
+            $ilike: `%${searchString}%`
+          }
+        }, {
+          email: {
+            $ilike: `%${searchString}%`
+          }
+        }]
       },
       attributes: ['fullName', 'email', 'id']
     };
+    if (!req.query.q) {
+      return res.status(400).send({
+        message: 'Please enter a keyword'
+      });
+    }
     if (req.decoded.role === 'admin') {
       return User
       .findAll(query)
       .then((user) => {
         if (user[0] === undefined) {
-          return res.status(404).send({ message: 'User not found!' });
+          return res.status(404).send({
+            message: 'User not found!'
+          });
         }
-        const message = 'User found successfully';
-        return res.status(200).json({ message, user });
+        return res.status(200).json({
+          message: 'User found successfully',
+          user
+        });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
     }
     return res.status(401).send({
       message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
