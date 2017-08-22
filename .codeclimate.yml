@@ -1,0 +1,19 @@
+engines:
+  duplications:
+    enabled: true
+    config:
+      languages:
+        javascript:
+          mass_threshold: 20
+  eslint:
+    enabled: true
+ratings:
+  paths:
+      - "**.js"
+exclude_paths:
+- "build"
+- "public"
+- .gitignore
+- "/server/test/"
+- "node_modules/"
+- "gulpfile.babel.js"
