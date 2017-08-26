@@ -23,7 +23,10 @@ class Helpers {
       password: user.generateHash(req.body.password)
     })
       .then((newUser) => {
-        const token = user.generateToken(newUser.id, newUser.role, newUser.fullName);
+        const token = user.generateToken(
+          newUser.id,
+          newUser.role,
+          newUser.fullName);
         res.status(201).send({
           token,
           user: {
@@ -68,7 +71,10 @@ class Helpers {
         const errorMessage = 'updateUserError';
         const errors = Helpers.formValidator(req, errorMessage);
         if (errors) {
-          return res.status(400).send({ message: 'Error occured while updating User', errors });
+          return res.status(400).send({
+            message: 'Error occured while updating User',
+            errors
+          });
         }
         return user
           .update({
@@ -105,7 +111,10 @@ class Helpers {
    * @memberof Helpers
    */
   static createDocumentHelper(req, res) {
-    const verifyAccessType = Helpers.verifyAccessType(req.decoded.role, req.body.accessType);
+    const verifyAccessType = Helpers.verifyAccessType(
+      req.decoded.role,
+      req.body.accessType
+    );
     if (!verifyAccessType) {
       return res.status(400).send({
         message: 'Invalid Access Type'
@@ -162,7 +171,8 @@ class Helpers {
       }
       req.body.title = req.body.title || document.dataValues.title;
       req.body.content = req.body.content || document.dataValues.content;
-      req.body.accessType = req.body.accessType || document.dataValues.accessType;
+      req.body.accessType = req.body.accessType
+        || document.dataValues.accessType;
 
       const errorMessage = 'updateDocumentError';
       const errors = Helpers.formValidator(req, errorMessage);
@@ -172,7 +182,10 @@ class Helpers {
         });
       }
 
-      const verifyAccessType = Helpers.verifyAccessType(req.decoded.role, req.body.accessType);
+      const verifyAccessType = Helpers.verifyAccessType(
+        req.decoded.role,
+        req.body.accessType
+      );
       if (!verifyAccessType) {
         return res.status(400).send({
           message: 'Invalid Access Type'
@@ -275,7 +288,8 @@ class Helpers {
       req.checkBody('email', 'An email is required').notEmpty();
       req.checkBody('email', 'Invalid email address!').isEmail();
       req.checkBody('password', 'Please enter a password').notEmpty();
-      req.checkBody('password', 'Password must contain at least 7 characters').len(7, 20);
+      req.checkBody('password', 'Password must contain at least 7 characters')
+        .len(7, 20);
     }
     if (errorMessage === 'loginError') {
       req.checkBody('email', 'Invalid email address!').isEmail();
@@ -285,7 +299,8 @@ class Helpers {
     if (errorMessage === 'createDocumentError'
        || errorMessage === 'updateDocumentError') {
       req.checkBody('title', 'Please enter a title').notEmpty();
-      req.checkBody('content', 'Empty content. Please enter content here!').notEmpty();
+      req.checkBody('content', 'Empty content. Please enter content here!')
+        .notEmpty();
       req.checkBody('accessType', 'Please enter an Access Type').notEmpty();
       req.checkBody('accessType', 'Access Type must be alphanumeric').isAlpha();
     }

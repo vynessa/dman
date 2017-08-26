@@ -49,7 +49,10 @@ class UsersController {
     const errorMessage = 'loginError';
     const errors = Helpers.formValidator(req, errorMessage);
     if (errors) {
-      return res.status(401).send({ message: 'Error while Logging in', errors });
+      return res.status(401).send({
+        message: 'Error while Logging in',
+        errors
+      });
     }
     User.find({
       where: {
@@ -132,7 +135,10 @@ class UsersController {
             message: 'No user found!'
           });
         }
-        res.status(200).json({ message: `Number of users found: ${users.length}`, users });
+        res.status(200).json({
+          message: `Number of users found: ${users.length}`,
+          users
+        });
       })
       .catch(error => res.status(500).send(error));
   }
