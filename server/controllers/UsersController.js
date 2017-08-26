@@ -155,7 +155,7 @@ class UsersController {
         message: 'Unauthorized access! Only an admin can get a user'
       });
     }
-    User.findById(Math.abs(req.params.id))
+    return User.findById(Math.abs(req.params.id))
       .then((user) => {
         if (!user) {
           return res.status(404).send({

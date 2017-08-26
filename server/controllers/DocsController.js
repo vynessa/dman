@@ -73,24 +73,24 @@ class DocsController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    if (Number(req.decoded.id) === Number(req.params.id)
-        || req.decoded.role === 'admin') {
-      return Document.findById(req.params.id)
-        .then((document) => {
-          if (!document) {
-            return res.status(404).send({
-              message: 'This document does not exist!'
-            });
-          }
+    return Document.findById(Math.abs(req.params.id))
+      .then((document) => {
+        if (Number(req.decoded.id) === Number(document.userId)
+          || req.decoded.role === 'admin') {
           return res.status(200).send({
             message: 'Document found!', document
           });
-        })
-        .catch(error => res.status(500).send(error));
-    }
-    return res.status(403).send({
-      message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
-    });
+        }
+        if (!document) {
+          return res.status(404).send({
+            message: 'This document does not exist!'
+          });
+        }
+        return res.status(403).send({
+          message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
+        });
+      })
+      .catch(error => res.status(500).send(error));
   }
 
   /**
