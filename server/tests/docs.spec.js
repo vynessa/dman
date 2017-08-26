@@ -230,6 +230,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document created successfully');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -250,6 +252,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -266,6 +270,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.errors[0].msg === 'Access Type must be alphanumeric');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -286,26 +292,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Oops! A document with this title already exists!');
-        }
-        done();
-      });
-    });
-
-    it('should respond with `Ok` when creating a new document is created', (done) => {
-      api
-      .post('/api/v1/documents')
-      .set('Authorization', `${token}`)
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .send({
-        title: 'Poem',
-        content: 'New dawn. New day.',
-        accessType: 'admin',
-      })
-      .expect(200)
-      .end((err, res) => {
-        if (!err) {
-          assert(res.body.message === 'Document created successfully');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -326,6 +314,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -345,6 +335,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.errors[0].msg === 'Please enter a title');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -362,6 +354,8 @@ describe('Document Controller Test Suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.documents.length >= 1);
+          } else {
+            assert.ifError(err);
           }
           done();
         });
@@ -377,6 +371,8 @@ describe('Document Controller Test Suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.documents.length >= 1);
+          } else {
+            assert.ifError(err);
           }
           done();
         });
@@ -394,6 +390,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -401,7 +399,7 @@ describe('Document Controller Test Suite', () => {
 
     it('should respond with `OK` if a user queries his/her documents', (done) => {
       api
-      .get('/api/v1/documents/3')
+      .get('/api/v1/documents/2')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -409,6 +407,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -424,6 +424,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -439,6 +441,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -454,6 +458,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'This document does not exist!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -471,6 +477,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -486,6 +494,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'This document does not exist!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -501,6 +511,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Please enter a keyword');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -523,6 +535,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document Successfully Updated');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -543,6 +557,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized Access ¯¯|_(ツ)_|¯¯');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -563,6 +579,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -583,6 +601,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Sorry, this title already exists!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -603,6 +623,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -623,6 +645,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Sorry, the document does not exist!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -640,6 +664,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document deleted successfully!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -655,6 +681,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -670,6 +698,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document not found! :(');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -685,6 +715,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! Only an admin can delete a document.');
+        } else {
+          assert.ifError(err);
         }
         done();
       });

@@ -55,6 +55,8 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Welcome to the dMan API!');
+          } else {
+            assert.ifError(err);
           }
           done();
         });
@@ -77,8 +79,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'This user already exists!');
           } else {
-            const error = new Error('Registration error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -120,8 +121,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.errors[0].msg === 'Please enter a password');
           } else {
-            const error = new Error('Login error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -141,8 +141,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.user.name === 'Admin');
           } else {
-            const error = new Error('Login error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -162,8 +161,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
           } else {
-            const error = new Error('Login error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -183,8 +181,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
           } else {
-            const error = new Error('Login error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -210,8 +207,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.user.email === 'femi@gmail.com');
           } else {
-            const error = new Error('User registration failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -233,8 +229,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Invalid token. Please login :)');
           } else {
-            const error = new Error('User registration failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -255,8 +250,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Please set token in the header!');
           } else {
-            const error = new Error('User registration failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -281,8 +275,7 @@ describe('Users Controller Test suite', () => {
                 'Unathorized access! Only an admin can create a user'
             );
           } else {
-            const error = new Error('User registration failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -301,8 +294,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.users.length >= 1);
           } else {
-            const error = new Error('Database error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -319,8 +311,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access! All users can only be viewed by an admin');
           } else {
-            const error = new Error('Database error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -339,8 +330,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! Only an admin can get a user');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -357,8 +347,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.user.id === 1);
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -375,8 +364,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.user.id === 1);
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -393,8 +381,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'User not found!');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -411,8 +398,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -431,8 +417,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -449,8 +434,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.document[0].title === 'Politik');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -467,8 +451,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'No document found!');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -485,8 +468,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -505,8 +487,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Please enter a keyword');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -523,8 +504,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'User found successfully');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -541,8 +521,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -559,8 +538,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'User not found!');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -583,8 +561,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -604,8 +581,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
           } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -647,8 +623,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.errors[0].msg === 'Password must contain at least 7 characters');
           } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -668,8 +643,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'This email already exists!');
           } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -690,8 +664,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Sorry, the user does not exist!');
           } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
@@ -710,8 +683,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -728,8 +700,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'Yipee! User deleted successfully!');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -746,8 +717,7 @@ describe('Users Controller Test suite', () => {
         if (!err) {
           assert(res.body.message === 'User not found! :(');
         } else {
-          const error = new Error('Database error');
-          assert.ifError(error);
+          assert.ifError(err);
         }
         done();
       });
@@ -764,8 +734,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(res.body.message === 'Unathuorized Access! ¯¯|_(ツ)_|¯¯');
           } else {
-            const error = new Error('Database error');
-            assert.ifError(error);
+            assert.ifError(err);
           }
           done();
         });
