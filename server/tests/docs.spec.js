@@ -399,7 +399,7 @@ describe('Document Controller Test Suite', () => {
 
     it('should respond with `OK` if a user queries his/her documents', (done) => {
       api
-      .get('/api/v1/documents/2')
+      .get('/api/v1/documents/3')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -416,7 +416,7 @@ describe('Document Controller Test Suite', () => {
 
     it('should respond with `Unauthorized` if a user queries another user\'s document', (done) => {
       api
-      .get('/api/v1/documents/5')
+      .get('/api/v1/documents/1')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)

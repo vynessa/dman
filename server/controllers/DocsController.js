@@ -75,15 +75,15 @@ class DocsController {
     }
     return Document.findById(Math.abs(req.params.id))
       .then((document) => {
+        if (!document) {
+          return res.status(404).send({
+            message: 'This document does not exist!'
+          });
+        }
         if (Number(req.decoded.id) === Number(document.userId)
           || req.decoded.role === 'admin') {
           return res.status(200).send({
             message: 'Document found!', document
-          });
-        }
-        if (!document) {
-          return res.status(404).send({
-            message: 'This document does not exist!'
           });
         }
         return res.status(403).send({
