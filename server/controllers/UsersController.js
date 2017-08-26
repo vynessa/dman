@@ -101,7 +101,6 @@ class UsersController {
     if (req.headers.authorization) {
       if (req.decoded.role === 'user') {
         return res.status(403).send({
-          success: false,
           message: 'Unathorized access! Only an admin can create a user'
         });
       }
