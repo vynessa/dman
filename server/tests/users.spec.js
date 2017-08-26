@@ -84,7 +84,7 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with `Bad request` error if no email is passed', (done) => {
+    it('should respond with `Bad request` error if no email is passed in', (done) => {
       api
         .post('/api/v1/users/auth/register')
         .set('Accept', 'application/json')
@@ -430,7 +430,7 @@ describe('Users Controller Test suite', () => {
         .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.users.length >= 1);
+            assert(res.body.users.length > 0);
           } else {
             const error = new Error('Database error');
             assert.ifError(error);

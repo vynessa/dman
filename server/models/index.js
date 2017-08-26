@@ -22,6 +22,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(process.env.DB_URL, {
     dialect: 'postgres'
   });
+
 }
 
 fs
