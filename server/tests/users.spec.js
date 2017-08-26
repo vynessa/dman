@@ -235,27 +235,6 @@ describe('Users Controller Test suite', () => {
         });
     });
 
-    it('should respond with `Ok` if an admin updates a user\'s role', (done) => {
-      api
-      .put('/api/v1/user/2')
-      .set('Authorization', `${token}`)
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .send({
-        fullName: 'Gold Ejikeme',
-        email: 'gold.ejike@gmail.com',
-        password: 'goldejike',
-        role: 'admin'
-      })
-      .expect(200)
-      .end((err, res) => {
-        if (!err) {
-          assert(res.body.message === 'Document Successfully Updated');
-        }
-        done();
-      });
-    });
-
     it('should respond with `Bad request` if a user updates his/her password with less than 7 characters', (done) => {
       api
         .put('/api/v1/users/2')
