@@ -21,7 +21,8 @@ app.use(valueChecker);
 app.use(router);
 
 app.use('*', (req, res) => res.status(200).send(
-  `Hello there! The API is at http://localhost:${port}/api/v1. View the API docmentation at http://localhost:${port}/`
+  `Hello there! The API is at http://localhost:${port}/api/v1.
+  View the API docmentation at http://localhost:${port}/`
 ));
 
 app.listen(port, () => {

@@ -80,7 +80,8 @@ class DocsController {
             message: 'This document does not exist!'
           });
         }
-        if (req.decoded.role === 'admin' || Number(req.decoded.id) === Number(document.userId)
+        if (req.decoded.role === 'admin'
+          || Number(req.decoded.id) === Number(document.userId)
           ) {
           return res.status(200).send({
             message: 'Document found!', document
