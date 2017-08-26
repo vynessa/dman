@@ -219,7 +219,7 @@
         <ul class="search-results"></ul>
       <div id="toc" class="toc-list-h1">
           <li>
-            <a href="#welcome-to-dman-api" class="toc-h1 toc-link" data-title="Welcome to dman API">Welcome to dman API</a>
+            <a href="#welcome-to-the-dman-api" class="toc-h1 toc-link" data-title="Welcome to the dman API">Welcome to the dman API</a>
           </li>
           <li>
             <a href="#authentication" class="toc-h1 toc-link" data-title="Authentication">Authentication</a>
@@ -243,6 +243,9 @@
                     <a href="#delete-user" class="toc-h2 toc-link" data-title="Users">Delete User</a>
                   </li>
                   <li>
+                    <a href="#create-user" class="toc-h2 toc-link" data-title="Users">Create User</a>
+                  </li>
+                  <li>
                     <a href="#get-all-users" class="toc-h2 toc-link" data-title="Users">Get All Users</a>
                   </li>
               </ul>
@@ -257,10 +260,10 @@
                     <a href="#get-documents" class="toc-h2 toc-link" data-title="Documents">Get Documents</a>
                   </li>
                   <li>
-                    <a href="#get-a-document" class="toc-h2 toc-link" data-title="Documents">Get a Document</a>
+                    <a href="#find-document" class="toc-h2 toc-link" data-title="Documents">Find Document</a>
                   </li>
                   <li>
-                    <a href="#edit-document" class="toc-h2 toc-link" data-title="Documents">Edit Document</a>
+                    <a href="#update-document" class="toc-h2 toc-link" data-title="Documents">Update Document</a>
                   </li>
                   <li>
                     <a href="#delete-user" class="toc-h2 toc-link" data-title="Documents">Delete User</a>
@@ -282,34 +285,22 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id='welcome-to-dman-api'>Welcome to dman API</h1>
-<p>Welcome to the dman API - A Document Management System API! You can use our API to access dman API endpoints, which can give you information on how to register, login, add a new document and manage your document in our database.</p>
+        <h1 id='welcome-to-the-dman-api'>Welcome to the dman API</h1>
+<p>Welcome to the dman API - A Document Management System API! You can use our API to access dman API endpoints, which gives you information on how to register, login, add a new document and manage your document in our database.</p>
 
 <p>We have language bindings in JavaScript! You can view code examples in the dark area to the right.
-This example API documentation page was created with <a href="https://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&#39;s documentation.</p>
+This example API documentation page was created with <a href="https://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API documentation(s).</p>
 <h1 id='authentication'>Authentication</h1>
-<blockquote>
-<p>All routes were protected with JSON WEB TOKEN which is send to client after successful registration or login</p>
-</blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="kr">import</span> <span class="nx">jwt</span> <span class="nx">from</span> <span class="p">(</span><span class="s1">'jswonwebtoken'</span><span class="p">);</span>
+<p>An authorization token is required to access all routes except the <code>Register</code> and <code>Login</code> routes. Try the <code>Register</code> or <code>Login</code> route to get a token.</p>
 
-<span class="kr">const</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">jwt</span><span class="p">.</span><span class="nx">sign</span><span class="p">(</span><span class="s1">'userInfo'</span><span class="p">);</span>
-
-</code></pre>
-<blockquote>
-<p>Always set <code>token</code> as <code>Authorization</code> in the header before making any request.</p>
-</blockquote>
-
-<p>An authorization token is required to access all routes except <code>Login</code> and <code>Register</code> routes. Try the <code>register</code> or <code>Login</code> route(for an existing users) to get a token.</p>
-
-<p>A token generated expires 72 hours after it was generated.</p>
+<p>A token generated expires 72 hours after it is being generated.</p>
 
 <p>The header should be set in the following format:</p>
 
 <p><code>Authorization: token</code></p>
 
 <aside class="notice">
-You must replace <code>token</code> with the one you get after authentication.
+You must replace the<code>token</code> with the one gotten after authentication.
 </aside>
 <h1 id='users'>Users</h1><h2 id='register-user'>Register User</h2>
 <blockquote>
@@ -325,10 +316,8 @@ You must replace <code>token</code> with the one you get after authentication.
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"success"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User created successfully!"</span><span class="p">,</span>
+    <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE1MDI5Njg3MTEsImV4cCI6MTUwMzIyNzkxMX0.fXTQvY0Ds83MRdDdJ33lfjAgCeBginLX6pgs3FJ38vc"</span><span class="p">,</span>
     <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE1MDI5Njg3MTEsImV4cCI6MTUwMzIyNzkxMX0.fXTQvY0Ds83MRdDdJ33lfjAgCeBginLX6pgs3FJ38vc"</span><span class="p">,</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
         <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
         <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"vanessa@gmail.com"</span><span class="p">,</span>
@@ -359,10 +348,8 @@ You must replace <code>token</code> with the one you get after authentication.
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"success"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Login successful! :)"</span><span class="p">,</span>
     <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE1MDI5Njg4MDksImV4cCI6MTUwMzIyODAwOX0.sOCcWWnsrSmnlH0tdWTG9bnGMTQC7dUqU6DhgcUaCyM"</span><span class="p">,</span>
-    <span class="s2">"userDetails"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
         <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span>
@@ -382,19 +369,19 @@ You must replace <code>token</code> with the one you get after authentication.
 <p>Request:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre>
 <blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Account successfully updated"</span><span class="p">,</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Profile successfully updated"</span><span class="p">,</span>
     <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
         <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@admin.com"</span><span class="p">,</span>
-        <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-3'>Request</h3>
@@ -410,13 +397,6 @@ You must replace <code>token</code> with the one you get after authentication.
 </ul>
 <h2 id='find-user'>Find User</h2>
 <blockquote>
-<p>Request:</p>
-</blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre>
-<blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
@@ -430,7 +410,7 @@ You must replace <code>token</code> with the one you get after authentication.
 <span class="p">}</span>
 </code></pre><h3 id='request-4'>Request</h3>
 <ul>
-<li>Endpoint: GET: <code>/api/v1/users/:id</code></li>
+<li>Endpoint: GET: <code>/api/v1/users/1</code></li>
 <li>Requires: Authorization</li>
 </ul>
 <h3 id='response-4'>Response</h3>
@@ -440,13 +420,6 @@ You must replace <code>token</code> with the one you get after authentication.
 </ul>
 <h2 id='delete-user'>Delete User</h2>
 <blockquote>
-<p>Request:</p>
-</blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre>
-<blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
@@ -454,7 +427,7 @@ You must replace <code>token</code> with the one you get after authentication.
 <span class="p">}</span>
 </code></pre><h3 id='request-5'>Request</h3>
 <ul>
-<li>Endpoint: DELETE: <code>/api/v1/users/:id</code></li>
+<li>Endpoint: DELETE: <code>/api/v1/users/2</code></li>
 <li>Requires: Authorization</li>
 </ul>
 <h3 id='response-5'>Response</h3>
@@ -462,6 +435,47 @@ You must replace <code>token</code> with the one you get after authentication.
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
+<h2 id='create-user'>Create User</h2>
+<blockquote>
+<p>Request:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="p">{</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Chelsea"</span><span class="p">,</span>
+        <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@chelsea.com"</span><span class="p">,</span>
+        <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"chelseaFC"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+<blockquote>
+<p>Response: </p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="p">{</span>
+        <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsInJvbGUiOiJ1c2VyIiwiZnVsbE5hbWUiOiJDaGVsc2VhIiwiaWF0IjoxNTAzNjY0NTI0LCJleHAiOjE1MDM5MjM3MjR9.67rhSAc3BtqklthKVPKajoaBo2VpG_GYEWyu3xHuwT0"</span><span class="p">,</span>
+        <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Chelsea"</span><span class="p">,</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@chelsea.com"</span><span class="p">,</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-6'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>/api/v1/users/createuser</code></li>
+<li>Requires: Authorization</li>
+</ul>
+<h3 id='response-6'>Response</h3>
+<ul>
+<li>Status: <code>201: Created</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
+
+<aside class="notice">
+ Only and admin user can access this route.
+</aside>
 <h2 id='get-all-users'>Get All Users</h2>
 <blockquote>
 <p>Sample JSON structured response:</p>
@@ -488,12 +502,12 @@ You must replace <code>token</code> with the one you get after authentication.
         <span class="p">}</span>
     <span class="p">]</span>
 <span class="p">}</span>
-</code></pre><h3 id='request-6'>Request</h3>
+</code></pre><h3 id='request-7'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>/api/v1/users</code></li>
 <li>Requires: Authorization</li>
 </ul>
-<h3 id='response-6'>Response</h3>
+<h3 id='response-7'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -509,17 +523,23 @@ You must replace <code>token</code> with the one you get after authentication.
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
   <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at the beach"</span><span class="p">,</span>
   <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever."</span><span class="p">,</span>
-  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span>
+  <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span>
 <span class="p">}</span>
 </code></pre>
 <blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"a day at the beach"</span><span class="p">,</span>
-    <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever"</span><span class="p">,</span>
-    <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document created successfully"</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document created successfully"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at the beach"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever."</span><span class="p">,</span>
+        <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+        <span class="s2">"documentId"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request'>Request</h3>
 <ul>
@@ -536,54 +556,38 @@ You must replace <code>token</code> with the one you get after authentication.
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"listDocuments"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"let be epic!!!"</span><span class="p">,</span>
-            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Andela - Simply EPIC"</span><span class="p">,</span>
-            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-02T15:11:03.208Z"</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"es9"</span><span class="p">,</span>
-            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"The heart of Javascript"</span><span class="p">,</span>
-            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
-            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"daniel"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-02T15:15:14.741Z"</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Politik"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Waterside and plastic lights. All going down memory lane"</span><span class="p">,</span>
+            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">},</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"jundoe@email.com"</span><span class="p">,</span>
-            <span class="s2">"content"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
-            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"jundoe"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-10T16:56:24.201Z"</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Poem"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"New dawn. New day."</span><span class="p">,</span>
+            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"jundoe@email.com"</span><span class="p">,</span>
-            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"sakjskajkgasgasg"</span><span class="p">,</span>
-            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
-            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"jundoe"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-10T16:56:37.889Z"</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"jundoe@email.com"</span><span class="p">,</span>
-            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"sakjskajkgasgasg"</span><span class="p">,</span>
-            <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
-            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"jundoe"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-10T16:56:50.804Z"</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at the beach"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever."</span><span class="p">,</span>
+            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
+            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">}</span>
-    <span class="p">],</span>
-    <span class="s2">"meta"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">"pageSize"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">5</span>
-    <span class="p">}</span>
+    <span class="p">]</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-2'>Request</h3>
 <ul>
@@ -595,53 +599,63 @@ You must replace <code>token</code> with the one you get after authentication.
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
-<h2 id='get-a-document'>Get a Document</h2>
+<h2 id='find-document'>Find Document</h2>
 <blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"id"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"a day at the beach"</span><span class="p">,</span>
-    <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-    <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever"</span><span class="p">,</span>
-    <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-    <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-11T16:14:03.456Z"</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document found!"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"A day at the beach"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever."</span><span class="p">,</span>
+        <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+        <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+        <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
+        <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-3'>Request</h3>
 <ul>
-<li>Endpoint: GET: <code>api/v1/documents/7</code></li>
-<li>Requires: Authentication
-### Response</li>
+<li>Endpoint: GET: <code>api/v1/documents/5</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='response-3'>Response</h3>
+<ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
-<h2 id='edit-document'>Edit Document</h2>
+<h2 id='update-document'>Update Document</h2>
 <blockquote>
 <p>Request:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"another day at the beach"</span><span class="p">,</span>
-   <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
    <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever yet again"</span><span class="p">,</span>
+   <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"private"</span>
 <span class="p">}</span>
 </code></pre>
 <blockquote>
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"The Document has been successfully updated"</span><span class="p">,</span>
-    <span class="s2">"documentId"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"another day in the beach"</span><span class="p">,</span>
-    <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever yet again"</span><span class="p">,</span>
-    <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"admin"</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document Successfully Updated"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"another day at the beach"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever yet again"</span><span class="p">,</span>
+        <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+        <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"private"</span><span class="p">,</span>
+        <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25T22:51:59.887Z"</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-4'>Request</h3>
 <ul>
-<li>Endpoint: PUT: <code>api/v1/documents/7</code></li>
+<li>Endpoint: PUT: <code>api/v1/documents/5</code></li>
 <li>Requires: Authentication</li>
 <li>Body <code>(application/json)</code></li>
 </ul>
-<h3 id='response-3'>Response</h3>
+<h3 id='response-4'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -651,14 +665,14 @@ You must replace <code>token</code> with the one you get after authentication.
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"The Document has been deleted successfully."</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document deleted successfully!"</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-5'>Request</h3>
 <ul>
-<li>Endpoint: DELETE: <code>api/v1/documents/4</code></li>
+<li>Endpoint: DELETE: <code>api/v1/documents/5</code></li>
 <li>Requires: Authentication</li>
 </ul>
-<h3 id='response-4'>Response</h3>
+<h3 id='response-5'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -667,19 +681,21 @@ You must replace <code>token</code> with the one you get after authentication.
 <blockquote>
 <p>Response:</p>
 </blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">"id"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"another day in the beach"</span><span class="p">,</span>
-        <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-        <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever"</span><span class="p">,</span>
-        <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-        <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-11T16:14:03.456Z"</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document found!"</span><span class="p">,</span>
+    <span class="s2">"document"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Politik"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Waterside and plastic lights. All going down memory lane"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 </code></pre><h3 id='request-6'>Request</h3>
 <ul>
-<li>Endpoint: GET: <code>api/v1/search/documents/?q=Another day in the beach</code></li>
+<li>Endpoint: GET: <code>api/v1/search/documents/?q=politik</code></li>
 <li>Requires: Authentication</li>
 </ul>
 <h3 id='query-parameters'>Query Parameters</h3>
@@ -696,15 +712,13 @@ You must replace <code>token</code> with the one you get after authentication.
 <td>Search query.</td>
 </tr>
 </tbody></table>
-<h3 id='response-5'>Response</h3>
+<h3 id='response-6'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
 <h1 id='errors'>Errors</h1>
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files...just save them to the `includes` folder and add them to the top of your `index.md`'s frontmatter. Files are included in the order listed.</aside>
-
-<p>The Kittn API uses the following error codes:</p>
+<p>The dman API uses the following error codes:</p>
 
 <table><thead>
 <tr>
@@ -718,19 +732,19 @@ You must replace <code>token</code> with the one you get after authentication.
 </tr>
 <tr>
 <td>401</td>
-<td>Unauthorized -- Your API key is wrong.</td>
+<td>Unauthorized -- Your email or password is wrong.</td>
 </tr>
 <tr>
 <td>403</td>
-<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+<td>Forbidden -- The document/user requested is hidden for administrators only.</td>
 </tr>
 <tr>
 <td>404</td>
-<td>Not Found -- The specified kitten could not be found.</td>
+<td>Not Found -- The specified document/user could not be found.</td>
 </tr>
 <tr>
 <td>405</td>
-<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
+<td>Method Not Allowed -- You tried to access a document/user with an invalid method.</td>
 </tr>
 <tr>
 <td>406</td>
@@ -742,7 +756,7 @@ You must replace <code>token</code> with the one you get after authentication.
 </tr>
 <tr>
 <td>410</td>
-<td>Gone -- The kitten requested has been removed from our servers.</td>
+<td>Gone -- The document/user requested has been removed from our servers.</td>
 </tr>
 <tr>
 <td>418</td>
@@ -750,7 +764,7 @@ You must replace <code>token</code> with the one you get after authentication.
 </tr>
 <tr>
 <td>429</td>
-<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
+<td>Too Many Requests -- You&#39;re requesting too many documents/users! Slow down!</td>
 </tr>
 <tr>
 <td>500</td>

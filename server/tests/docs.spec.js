@@ -3,12 +3,13 @@ import dotenv from 'dotenv';
 import request from 'supertest';
 import { assert } from 'chai';
 import app from '../../build/server';
+import invalidJson from '../fixtures/invalidFile.json';
 import { User, Document, Role } from '../models';
 
 dotenv.config();
 const api = request(app);
 
-let token, fullName, email, password;
+let token, userToken, fullName, email, password;
 let title, accessType, content, owner, userId;
 
 describe('Set the database up for testing', () => {
@@ -105,7 +106,7 @@ describe('Document Controller Test Suite', () => {
         .send({
           fullName: 'Gold Ejikeme',
           email: 'gold.ejikeme@gmail.com',
-          password: 'gold'
+          password: 'goldejike'
         })
         .expect(200)
         .end((err, res) => {
@@ -118,7 +119,7 @@ describe('Document Controller Test Suite', () => {
         });
     });
 
-    it('should return an error message if the documents array is empty', (done) => {
+    it('should respond with `Not found` if the admin queries all documents', (done) => {
       api
         .get('/api/v1/documents')
         .set('Authorization', `${token}`)
@@ -134,8 +135,24 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
-  describe('GET `/api/v1/documents`', () => {
+  describe('POST `/api/v1/documents`', () => {
     beforeEach((done) => {
+      api
+      .post('/api/v1/users/auth/login')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        email: 'gold.ejikeme@gmail.com',
+        password: 'goldejike'
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          userToken = res.body.token;
+        }
+        done();
+      });
+
       api
         .post('/api/v1/documents')
         .set('Authorization', `${token}`)
@@ -145,7 +162,6 @@ describe('Document Controller Test Suite', () => {
           title: 'Politik',
           content: 'Waterside and plastic lights. All going down memory lane',
           accessType: 'public',
-          userId: 1
         })
         .expect(201)
         .end((err, res) => {
@@ -168,7 +184,6 @@ describe('Document Controller Test Suite', () => {
           title: 'The other room',
           content: 'We all belong somewhere. Some belong in the other room',
           accessType: 'public',
-          userId: 1
         })
         .expect(201)
         .end((err, res) => {
@@ -183,9 +198,9 @@ describe('Document Controller Test Suite', () => {
         });
     });
 
-    it('should return `OK` a document is created successfully by an admin', (done) => {
+    it('should respond with `OK` if a document is created successfully by an admin', (done) => {
       api
-      .get('/api/v1/documents')
+      .post('/api/v1/documents')
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -199,8 +214,260 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
+  describe('POST `/api/v1/documents`', () => {
+    it('should respond with `OK` if a document is created successfully by a user', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'Trump has been covfefed',
+        content: 'We all belong somewhere. Some belong in the other room. Some decide to covfefe',
+        accessType: 'user',
+      })
+      .expect(201)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document created successfully');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if a user passes in the wrong access type', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'Have you been covfefed?',
+        content: 'We all belong somewhere. Some belong in the other room. Some decide to covfefe',
+        accessType: 'admin',
+      })
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` when creating a document with a field containing a reverse interger', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send(invalidJson)
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.errors[0].msg === 'Access Type must be alphanumeric');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Conflict` when creating a document with an already existing title', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'Politik',
+        content: 'New dawn. New day.',
+        accessType: 'public',
+      })
+      .expect(409)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Oops! A document with this title already exists!');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if the user passes in a wrong access type', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'Another Poem',
+        content: 'New dawn. New day.',
+        accessType: 'user',
+      })
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` when some fields are empty', (done) => {
+      api
+      .post('/api/v1/documents')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        content: 'New dawn. New day.',
+        accessType: 'user',
+      })
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.errors[0].msg === 'Please enter a title');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+  });
+
+  describe('GET `/api/v1/documents/`', () => {
+    it('should respond with `OK` if the admin queries all documents and one or more exist', (done) => {
+      api
+        .get('/api/v1/documents')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.documents.length >= 1);
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `OK` if the user queries his/her documents and one or more exist', (done) => {
+      api
+        .get('/api/v1/documents')
+        .set('Authorization', `${userToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.documents.length >= 1);
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+  });
+
+  describe('GET `/api/v1/documents/:id`', () => {
+    it('should respond with `OK` if the document with the same id is found in the database', (done) => {
+      api
+      .get('/api/v1/documents/1')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `OK` if a user queries his/her documents', (done) => {
+      api
+      .get('/api/v1/documents/3')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Unauthorized` if a user queries another user\'s document', (done) => {
+      api
+      .get('/api/v1/documents/1')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(403)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if the id is a non-integer', (done) => {
+      api
+      .get('/api/v1/documents/1hgyt')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the document does not exist', (done) => {
+      api
+      .get('/api/v1/documents/990')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'This document does not exist!');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+  });
+
   describe('GET `/api/v1/search/documents`', () => {
-    it('should return `OK` one or more document is/are found in the search array', (done) => {
+    it('should respond with `OK` one or more document is/are found in the search array', (done) => {
       api
       .get('/api/v1/search/documents/?q=Politik')
       .set('Authorization', `${token}`)
@@ -210,12 +477,14 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document found!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Not found` if no document is returned', (done) => {
+    it('should respond with `Not found` if no document is returned', (done) => {
       api
       .get('/api/v1/search/documents/?q=Waterside')
       .set('Authorization', `${token}`)
@@ -225,12 +494,14 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'This document does not exist!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Bad request` if no search query is passed in', (done) => {
+    it('should respond with `Bad request` if no search query is passed in', (done) => {
       api
       .get('/api/v1/search/documents/?q=')
       .set('Authorization', `${token}`)
@@ -240,6 +511,8 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Please enter a keyword');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -247,7 +520,7 @@ describe('Document Controller Test Suite', () => {
   });
 
   describe('PUT `/api/v1/documents/:id`', () => {
-    it('should return `OK` a document is updated successfully', (done) => {
+    it('should respond with `OK` a document is updated successfully', (done) => {
       api
       .put('/api/v1/documents/2')
       .set('Authorization', `${token}`)
@@ -257,18 +530,85 @@ describe('Document Controller Test Suite', () => {
         title: 'The other roomsssss',
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private',
-        userId: 1
       })
       .expect(200)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document Successfully Updated');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Bad request` if the id is a non-integer', (done) => {
+    it('should respond with `Unauthorized` if a user tries to update another user\'s  document', (done) => {
+      api
+      .put('/api/v1/documents/2')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'The other one',
+        content: 'We all belong somewhere. Some belong in the other room',
+        accessType: 'private',
+      })
+      .expect(403)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Unauthorized Access ¯¯|_(ツ)_|¯¯');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if the wrong accessType is passed in', (done) => {
+      api
+      .put('/api/v1/documents/2')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'The other rooms!',
+        content: 'We all belong somewhere. Some belong in the other room',
+        accessType: 'user',
+      })
+      .expect(400)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Invalid Access Type');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Conflict` if a document is updated with an existing title', (done) => {
+      api
+      .put('/api/v1/documents/2')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        title: 'The other roomsssss',
+        content: 'We all belong somewhere. Some belong in the other room',
+        accessType: 'private'
+      })
+      .expect(409)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Sorry, this title already exists!');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if the id is a non-integer', (done) => {
       api
       .put('/api/v1/documents/iehdy')
       .set('Authorization', `${token}`)
@@ -277,19 +617,20 @@ describe('Document Controller Test Suite', () => {
       .send({
         title: 'The other roomsssss',
         content: 'We all belong somewhere. Some belong in the other room',
-        accessType: 'private',
-        userId: 1
+        accessType: 'private'
       })
       .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Not found` if the id does not exist', (done) => {
+    it('should respond with `Not found` if the id does not exist', (done) => {
       api
       .put('/api/v1/documents/67')
       .set('Authorization', `${token}`)
@@ -298,13 +639,14 @@ describe('Document Controller Test Suite', () => {
       .send({
         title: 'The other roomsssss',
         content: 'We all belong somewhere. Some belong in the other room',
-        accessType: 'private',
-        userId: 1
+        accessType: 'private'
       })
       .expect(404)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Sorry, the document does not exist!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -312,7 +654,7 @@ describe('Document Controller Test Suite', () => {
   });
 
   describe('DELETE `/api/v1/documents/:id`', () => {
-    it('should return `OK` a document is deleted successfully', (done) => {
+    it('should respond with `OK` a document is deleted successfully', (done) => {
       api
       .delete('/api/v1/documents/2')
       .set('Authorization', `${token}`)
@@ -322,12 +664,14 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document deleted successfully!');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Bad request` if the id passed in is a non-integer', (done) => {
+    it('should respond with `Bad request` if the id passed in is a non-integer', (done) => {
       api
       .delete('/api/v1/documents/kjfh')
       .set('Authorization', `${token}`)
@@ -337,21 +681,42 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+        } else {
+          assert.ifError(err);
         }
         done();
       });
     });
 
-    it('should return `Not found` if the id does not exist', (done) => {
+    it('should respond with `Unauthorized` if the user tires to delete another user\'s document', (done) => {
+      api
+      .delete('/api/v1/documents/1')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(403)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Unauthorized access! Only an admin can delete a document.');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the document does not exist', (done) => {
       api
       .delete('/api/v1/documents/90')
-      .set('Authorization', `${token}`)
+      .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(404)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Document not found! :(');
+        } else {
+          assert.ifError(err);
         }
         done();
       });

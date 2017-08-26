@@ -28,8 +28,8 @@ const verifyToken = (req, res, next) => {
       next();
     });
   } else {
-    return res.status(400).json({
-      message: 'Please provide a token!'
+    return res.status(500).json({
+      message: 'Internal Server Error'
     });
   }
 };

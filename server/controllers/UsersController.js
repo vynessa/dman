@@ -1,4 +1,4 @@
-import Helpers from '../utils/helper';
+import Helpers from '../utils/Helpers';
 import { User, Document } from '../models';
 
 /**
@@ -9,10 +9,18 @@ class UsersController {
    * @description
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} User
    * @memberof UsersController
    */
   static registerUser(req, res) {
+    const errorMessage = 'createUserError';
+    const errors = Helpers.formValidator(req, errorMessage);
+    if (errors) {
+      return res.status(400).send({
+        message: 'Error while registering',
+        errors
+      });
+    }
     User.find({
       where: {
         email: req.body.email
@@ -23,7 +31,6 @@ class UsersController {
           return Helpers.createUserHelper(req, res);
         }
         return res.status(409).send({
-          success: false,
           message: 'This user already exists!'
         });
       })
@@ -35,10 +42,18 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} User
    * @memberof UsersController
    */
   static loginUser(req, res) {
+    const errorMessage = 'loginError';
+    const errors = Helpers.formValidator(req, errorMessage);
+    if (errors) {
+      return res.status(401).send({
+        message: 'Error while Logging in',
+        errors
+      });
+    }
     User.find({
       where: {
         email: req.body.email
@@ -46,7 +61,7 @@ class UsersController {
     })
       .then((returningUser) => {
         if (!returningUser) {
-          return res.status(403).send({
+          return res.status(401).send({
             message: 'Incorrect email or password'
           });
         }
@@ -56,11 +71,15 @@ class UsersController {
           returningUser.password
         );
         if (!checkPassword) {
-          return res.status(403).send({
+          return res.status(401).send({
             message: 'Incorrect email or password'
           });
         }
-        const token = user.generateToken(returningUser.id, returningUser.role, returningUser.fullName);
+        const token = user.generateToken(
+          returningUser.id,
+          returningUser.role,
+          returningUser.fullName
+        );
         return res.status(200).send({
           token,
           user: {
@@ -78,14 +97,13 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static createUser(req, res) {
     if (req.headers.authorization) {
       if (req.decoded.role === 'user') {
-        return res.status(401).send({
-          success: false,
+        return res.status(403).send({
           message: 'Unathorized access! Only an admin can create a user'
         });
       }
@@ -98,12 +116,12 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static getUsers(req, res) {
     if (req.decoded.role !== 'admin') {
-      return res.status(401).send({
+      return res.status(403).send({
         message: 'Unauthorized access! All users can only be viewed by an admin'
       });
     }
@@ -114,12 +132,15 @@ class UsersController {
       .then((users) => {
         if (users.length === 0) {
           return res.status(404).send({
-            message: 'No users found!'
+            message: 'No user found!'
           });
         }
-        res.status(200).json({ message: 'All users found', users });
+        res.status(200).json({
+          message: `Number of users found: ${users.length}`,
+          users
+        });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -127,14 +148,19 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    User.findById(Math.abs(req.params.id))
+    if (req.decoded.role !== 'admin') {
+      return res.status(403).send({
+        message: 'Unauthorized access! Only an admin can get a user'
+      });
+    }
+    return User.findById(Math.abs(req.params.id))
       .then((user) => {
         if (!user) {
           return res.status(404).send({
@@ -151,7 +177,7 @@ class UsersController {
           }
         });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -159,7 +185,40 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
+   * @memberof DocsController
+   */
+  static findUserDocuments(req, res) {
+    const userId = req.params.id;
+    if (!Number.isInteger(Number(userId))) {
+      return Helpers.idValidator(res);
+    }
+    if (
+      req.decoded.role === 'admin' || Number(req.decoded.id) === Number(userId)
+    ) {
+      const query = {
+        where: {
+          id: userId
+        }
+      };
+      return Document.findAll(query).then((document) => {
+        if (document.length === 0) {
+          return res.status(404).send({ message: 'No document found!' });
+        }
+        return res.status(200).send({ message: 'Document found!', document });
+      });
+    }
+    return res.status(403).send({
+      message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
+    });
+  }
+
+  /**
+   * @description
+   * @static
+   * @param {object} req
+   * @param {object} res
+   * @returns {object} User
    * @memberof UsersController
    */
   static updateUser(req, res) {
@@ -171,12 +230,13 @@ class UsersController {
       req.body.password = user.generateHash(req.body.password);
     }
     if (req.body.role && req.decoded.role === 'user') {
-      return res.status(401).send({
-        message: 'Unauthorized access ¯¯|_(ツ)_|¯¯'
+      return res.status(403).send({
+        message: 'Unauthorized access! Only an admin can update roles'
       });
     }
-    return Helpers.updateUserHelper(req, res)
-    .catch(error => res.status(500).send(error));
+    return Helpers.updateUserHelper(req, res).catch(error =>
+      res.status(500).send(error)
+    );
   }
 
   /**
@@ -191,26 +251,29 @@ class UsersController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    if (Number(req.decoded.id) === Number(req.params.id)
-      || req.decoded.role === 'admin') {
+    if (
+      Number(req.decoded.id) === Number(req.params.id) ||
+      req.decoded.role === 'admin'
+    ) {
       return User.findById(Math.abs(req.params.id))
         .then((user) => {
           if (user) {
-            return user.destroy().then(() => res
-                .status(200)
-                .send({
+            return user
+              .destroy()
+              .then(() =>
+                res.status(200).send({
                   message: 'Yipee! User deleted successfully!'
                 })
-            )
-            .catch(error => res.status(400).send(error));
+              )
+              .catch(error => res.status(400).send(error));
           }
           return res.status(404).send({
             message: 'User not found! :('
           });
         })
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(500).send(error));
     }
-    return res.status(401).send({
+    return res.status(403).send({
       message: 'Unathuorized Access! ¯¯|_(ツ)_|¯¯'
     });
   }
@@ -220,22 +283,25 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} user
+   * @returns {object} User
    * @memberof UsersController
    */
   static searchUsers(req, res) {
     const searchString = Helpers.stringFilter(req.query.q);
     const query = {
       where: {
-        $or: [{
-          fullName: {
-            $ilike: `%${searchString}%`
+        $or: [
+          {
+            fullName: {
+              $ilike: `%${searchString}%`
+            }
+          },
+          {
+            email: {
+              $ilike: `%${searchString}%`
+            }
           }
-        }, {
-          email: {
-            $ilike: `%${searchString}%`
-          }
-        }]
+        ]
       },
       attributes: ['fullName', 'email', 'id']
     };
@@ -245,22 +311,21 @@ class UsersController {
       });
     }
     if (req.decoded.role === 'admin') {
-      return User
-      .findAll(query)
-      .then((user) => {
-        if (user[0] === undefined) {
-          return res.status(404).send({
-            message: 'User not found!'
+      return User.findAll(query)
+        .then((user) => {
+          if (user[0] === undefined) {
+            return res.status(404).send({
+              message: 'User not found!'
+            });
+          }
+          return res.status(200).json({
+            message: 'User found successfully',
+            user
           });
-        }
-        return res.status(200).json({
-          message: 'User found successfully',
-          user
-        });
-      })
-      .catch(error => res.status(500).send(error));
+        })
+        .catch(error => res.status(500).send(error));
     }
-    return res.status(401).send({
+    return res.status(403).send({
       message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
     });
   }

@@ -16,6 +16,7 @@ router.get('/api/v1/users', UsersController.getUsers)
   .post('/api/v1/users/auth/login', UsersController.loginUser)
   .put('/api/v1/users/:id', UsersController.updateUser)
   .delete('/api/v1/users/:id', UsersController.deleteUser)
+  .get('/api/v1/users/:id/documents', UsersController.findUserDocuments)
   .get('/api/v1/search/users', UsersController.searchUsers);
 
 // Documents endpoint
@@ -23,6 +24,7 @@ router.get('/api/v1/documents', DocsController.getDocuments)
   .post('/api/v1/documents', DocsController.createDocument)
   .put('/api/v1/documents/:id', DocsController.updateDocument)
   .delete('/api/v1/documents/:id', DocsController.deleteDocument)
+  .get('/api/v1/documents/:id', DocsController.findDocument)
   .get('/api/v1/search/documents', DocsController.searchDocuments);
 
 export default router;

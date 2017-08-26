@@ -30,11 +30,11 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.prototype.generateHash = (password) => {
-    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+    return bcrypt.hashSync(password.toString(), bcrypt.genSaltSync(8), null);
   };
 
   User.prototype.validatePassword = (password, savedPassword) => {
-    return bcrypt.compareSync(password, savedPassword);
+    return bcrypt.compareSync(password.toString(), savedPassword);
   };
 
   User.prototype.generateToken = (id, role, fullName) => {
