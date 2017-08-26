@@ -688,26 +688,9 @@ describe('Document Controller Test Suite', () => {
       });
     });
 
-    it('should respond with `Not found` if the id does not exist', (done) => {
-      api
-      .delete('/api/v1/documents/90')
-      .set('Authorization', `${token}`)
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(404)
-      .end((err, res) => {
-        if (!err) {
-          assert(res.body.message === 'Document not found! :(');
-        } else {
-          assert.ifError(err);
-        }
-        done();
-      });
-    });
-
     it('should respond with `Unauthorized` if the user tires to delete another user\'s document', (done) => {
       api
-      .delete('/api/v1/documents/90')
+      .delete('/api/v1/documents/1')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -715,6 +698,23 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! Only an admin can delete a document.');
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Not found` if the document does not exist', (done) => {
+      api
+      .delete('/api/v1/documents/90')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(404)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document not found! :(');
         } else {
           assert.ifError(err);
         }

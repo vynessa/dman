@@ -80,8 +80,8 @@ class DocsController {
             message: 'This document does not exist!'
           });
         }
-        if (Number(req.decoded.id) === Number(document.userId)
-          || req.decoded.role === 'admin') {
+        if (req.decoded.role === 'admin' || Number(req.decoded.id) === Number(document.userId)
+          ) {
           return res.status(200).send({
             message: 'Document found!', document
           });
@@ -122,31 +122,30 @@ class DocsController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    if (
-      Number(req.decoded.id) === Number(req.params.userId) ||
-      req.decoded.role === 'admin'
-    ) {
-      return Document.findById(Math.abs(req.params.id))
-        .then((document) => {
-          if (document) {
-            return document
-              .destroy()
-              .then(() =>
-                res.status(200).send({
-                  message: 'Document deleted successfully!'
-                })
-              )
-              .catch(error => res.status(400).send(error));
-          }
+    return Document.findById(Math.abs(req.params.id))
+      .then((document) => {
+        if (!document) {
           return res.status(404).send({
             message: 'Document not found! :('
           });
-        })
-        .catch(error => res.status(500).send(error));
-    }
-    return res.status(403).send({
-      message: 'Unauthorized access! Only an admin can delete a document.'
-    });
+        }
+        if (req.decoded.role === 'admin'
+          || Number(req.decoded.id) === Number(document.userId)
+        ) {
+          return document
+          .destroy()
+          .then(() =>
+            res.status(200).send({
+              message: 'Document deleted successfully!'
+            })
+          )
+          .catch(error => res.status(400).send(error));
+        }
+        return res.status(403).send({
+          message: 'Unauthorized access! Only an admin can delete a document.'
+        });
+      })
+      .catch(error => res.status(500).send(error));
   }
 
   /**
