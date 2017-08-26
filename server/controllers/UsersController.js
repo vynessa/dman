@@ -1,4 +1,5 @@
-import Helpers from '../utils/helper';
+import Helpers from '../utils/Helpers';
+import Utils from '../utils/Utils';
 import { User, Document } from '../models';
 
 /**
@@ -148,7 +149,7 @@ class UsersController {
    */
   static findUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     if (req.decoded.role !== 'admin') {
       return res.status(403).send({
@@ -186,7 +187,7 @@ class UsersController {
   static findUserDocuments(req, res) {
     const userId = req.params.id;
     if (!Number.isInteger(Number(userId))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     if (
       req.decoded.role === 'admin' || Number(req.decoded.id) === Number(userId)
@@ -218,7 +219,7 @@ class UsersController {
    */
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     const user = new User();
     if (req.body.password) {
@@ -244,7 +245,7 @@ class UsersController {
    */
   static deleteUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     if (
       Number(req.decoded.id) === Number(req.params.id) ||
@@ -282,7 +283,7 @@ class UsersController {
    * @memberof UsersController
    */
   static searchUsers(req, res) {
-    const searchString = Helpers.stringFilter(req.query.q);
+    const searchString = Utils.stringFilter(req.query.q);
     const query = {
       where: {
         $or: [

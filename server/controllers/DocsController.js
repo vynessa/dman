@@ -1,4 +1,5 @@
-import Helpers from '../utils/helper';
+import Helpers from '../utils/Helpers';
+import Utils from '../utils/Utils';
 import { Document } from '../models';
 
 /**
@@ -71,7 +72,7 @@ class DocsController {
    */
   static findDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     if (Number(req.decoded.id) === Number(req.params.id)
         || req.decoded.role === 'admin') {
@@ -103,7 +104,7 @@ class DocsController {
    */
   static updateDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     return Helpers.updateDocumentHelper(req, res).catch(error =>
       res.status(500).send(error)
@@ -120,7 +121,7 @@ class DocsController {
    */
   static deleteDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
+      return Utils.idValidator(res);
     }
     if (
       Number(req.decoded.id) === Number(req.params.userId) ||
