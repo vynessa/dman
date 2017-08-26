@@ -133,7 +133,7 @@ class UsersController {
             message: 'No user found!'
           });
         }
-        res.status(200).json({ message: 'All users found', users });
+        res.status(200).json({ message: `Number of users found: ${users.length}`, users });
       })
       .catch(error => res.status(500).send(error));
   }

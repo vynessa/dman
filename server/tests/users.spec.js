@@ -191,137 +191,6 @@ describe('Users Controller Test suite', () => {
     });
   });
 
-  describe('PUT `/api/v1/users/:id`', () => {
-    it('should respond with `Bad request` if the id equals a non-integer', (done) => {
-      api
-        .put('/api/v1/users/ubbcb')
-        .set('Authorization', `${token}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Administrator',
-          password: 'adminuser'
-        })
-        .expect(400)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'Invalid ID. Please enter a valid ID');
-          } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
-          }
-          done();
-        });
-    });
-
-    it("should respond with `Unauthorized` if a user tries to update another user's profile", (done) => {
-      api
-        .put('/api/v1/users/1')
-        .set('Authorization', `${userToken}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Gold Williams'
-        })
-        .expect(403)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
-          } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
-          }
-          done();
-        });
-    });
-
-    it('should respond with `Ok` if an admin updates a user\'s role', (done) => {
-      api
-      .put('/api/v1/user/2')
-      .set('Authorization', `${token}`)
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .send({
-        fullName: 'Gold Ejikeme',
-        email: 'gold.ejike@gmail.com',
-        password: 'goldejike',
-        role: 'admin'
-      })
-      .expect(200)
-      .end((err, res) => {
-        if (!err) {
-          assert(res.body.message === 'Document Successfully Updated');
-        }
-        done();
-      });
-    });
-
-    it('should respond with `Bad request` if a user updates his/her password with less than 7 characters', (done) => {
-      api
-        .put('/api/v1/users/2')
-        .set('Authorization', `${userToken}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Golden girl',
-          password: '09'
-        })
-        .expect(400)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.errors[0].msg === 'Password must contain at least 7 characters');
-          } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
-          }
-          done();
-        });
-    });
-
-    it('should respond with `Conflict` if a user updates his/her email with an existing email', (done) => {
-      api
-        .put('/api/v1/users/1')
-        .set('Authorization', `${token}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          email: 'info@admin.com',
-        })
-        .expect(409)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'This email already exists!');
-          } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
-          }
-          done();
-        });
-    });
-
-    it('should respond with `Not found` if the user does not exist', (done) => {
-      api
-        .put('/api/v1/users/5')
-        .set('Authorization', `${token}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Administrator',
-          password: 'adminuser'
-        })
-        .expect(404)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'Sorry, the user does not exist!');
-          } else {
-            const error = new Error('User\'s profile update failed!');
-            assert.ifError(error);
-          }
-          done();
-        });
-    });
-  });
-
   describe('POST `/api/v1/users/createuser`', () => {
     invalidToken = 'hscuftcbcjk';
 
@@ -430,7 +299,7 @@ describe('Users Controller Test suite', () => {
         .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.users.length > 0);
+            assert(res.body.users.length >= 1);
           } else {
             const error = new Error('Database error');
             assert.ifError(error);
@@ -695,6 +564,137 @@ describe('Users Controller Test suite', () => {
         }
         done();
       });
+    });
+  });
+
+  describe('PUT `/api/v1/users/:id`', () => {
+    it('should respond with `Bad request` if the id equals a non-integer', (done) => {
+      api
+        .put('/api/v1/users/ubbcb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Administrator',
+          password: 'adminuser'
+        })
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it("should respond with `Unauthorized` if a user tries to update another user's profile", (done) => {
+      api
+        .put('/api/v1/users/1')
+        .set('Authorization', `${userToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Gold Williams'
+        })
+        .expect(403)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Ok` if an admin updates a user\'s role', (done) => {
+      api
+      .put('/api/v1/user/2')
+      .set('Authorization', `${token}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .send({
+        fullName: 'Gold Ejikeme',
+        email: 'gold.ejike@gmail.com',
+        password: 'goldejike',
+        role: 'admin'
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document Successfully Updated');
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Bad request` if a user updates his/her password with less than 7 characters', (done) => {
+      api
+        .put('/api/v1/users/2')
+        .set('Authorization', `${userToken}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Golden girl',
+          password: '09'
+        })
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.errors[0].msg === 'Password must contain at least 7 characters');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Conflict` if a user updates his/her email with an existing email', (done) => {
+      api
+        .put('/api/v1/users/1')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          email: 'info@admin.com',
+        })
+        .expect(409)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'This email already exists!');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
+    });
+
+    it('should respond with `Not found` if the user does not exist', (done) => {
+      api
+        .put('/api/v1/users/5')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          fullName: 'Administrator',
+          password: 'adminuser'
+        })
+        .expect(404)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Sorry, the user does not exist!');
+          } else {
+            const error = new Error('User\'s profile update failed!');
+            assert.ifError(error);
+          }
+          done();
+        });
     });
   });
 

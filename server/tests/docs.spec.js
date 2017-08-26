@@ -133,21 +133,6 @@ describe('Document Controller Test Suite', () => {
           done();
         });
     });
-
-    it('should respond with `Not found` if the user queries his/her documents', (done) => {
-      api
-        .get('/api/v1/documents')
-        .set('Authorization', `${userToken}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(404)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.message === 'No document found!');
-          }
-          done();
-        });
-    });
   });
 
   describe('POST `/api/v1/documents`', () => {
