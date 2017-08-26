@@ -1,4 +1,4 @@
-import Helpers from '../utils/helper';
+import Helpers from '../utils/Helpers';
 import { Document } from '../models';
 
 /**
@@ -42,7 +42,7 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} document
    * @memberof DocsController
    */
   static getDocuments(req, res) {

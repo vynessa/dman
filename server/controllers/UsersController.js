@@ -1,4 +1,4 @@
-import Helpers from '../utils/helper';
+import Helpers from '../utils/Helpers';
 import { User, Document } from '../models';
 
 /**
