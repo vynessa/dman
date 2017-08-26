@@ -1,5 +1,5 @@
 import Helpers from '../utils/helper';
-import { User, Document } from '../models';
+import { Document } from '../models';
 
 /**
  * @class DocsController
@@ -10,20 +10,31 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} Document
    * @memberof DocsController
    */
-  static getDocuments(req, res) {
-    Document.findAll()
-      .then((documents) => {
-        if (documents.length === 0) {
-          return res.status(404).send({
-            message: 'No document found!'
-          });
+  static createDocument(req, res) {
+    const errorMessage = 'createDocumentError';
+    const errors = Helpers.formValidator(req, errorMessage);
+    if (errors) {
+      return res.status(400).send({
+        message: 'Error occured while creating Document', errors
+      });
+    }
+    Document.find({
+      where: {
+        title: req.body.title
+      }
+    })
+      .then((document) => {
+        if (!document) {
+          return Helpers.createDocumentHelper(req, res);
         }
-        return res.status(200).send(documents);
+        return res.status(409).send({
+          message: 'Oops! A document with this title already exists!'
+        });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 
   /**
@@ -31,11 +42,55 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} Document
+   * @returns {void}
    * @memberof DocsController
    */
-  static createDocument(req, res) {
-    return Helpers.createDocumentHelper(req, res);
+  static getDocuments(req, res) {
+    const query = {
+      where: {
+        accessType: [req.decoded.role, 'public']
+      }
+    };
+    if (req.decoded.role === 'admin') {
+      return Document.findAll()
+        .then(documents => Helpers.getDocsHelper(res, documents))
+        .catch(error => res.status(500).send(error));
+    }
+    Document.findAll(query)
+      .then(documents => Helpers.getDocsHelper(res, documents))
+      .catch(error => res.status(500).send(error));
+  }
+
+  /**
+   * @description
+   * @static
+   * @param {any} req
+   * @param {any} res
+   * @returns {object} document
+   * @memberof DocsController
+   */
+  static findDocument(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return Helpers.idValidator(res);
+    }
+    if (Number(req.decoded.id) === Number(req.params.id)
+        || req.decoded.role === 'admin') {
+      return Document.findById(req.params.id)
+        .then((document) => {
+          if (!document) {
+            return res.status(404).send({
+              message: 'This document does not exist!'
+            });
+          }
+          return res.status(200).send({
+            message: 'Document found!', document
+          });
+        })
+        .catch(error => res.status(500).send(error));
+    }
+    return res.status(403).send({
+      message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
+    });
   }
 
   /**
@@ -50,9 +105,8 @@ class DocsController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    return Helpers.updateDocumentHelper(req, res)
-    .catch(error =>
-      res.status(error)
+    return Helpers.updateDocumentHelper(req, res).catch(error =>
+      res.status(500).send(error)
     );
   }
 
@@ -88,9 +142,9 @@ class DocsController {
             message: 'Document not found! :('
           });
         })
-        .catch(error => res.status(400).send(error));
+        .catch(error => res.status(500).send(error));
     }
-    return res.status(401).send({
+    return res.status(403).send({
       message: 'Unauthorized access! Only an admin can delete a document.'
     });
   }
@@ -109,37 +163,7 @@ class DocsController {
         message: 'Please enter a keyword'
       });
     }
-    const searchString = Helpers.stringFilter(req.query.q);
-    let query;
-    if (req.decoded.role === 'admin') {
-      query = {
-        where: {
-          $and: [{
-            title: {
-              $ilike: `%${searchString}%`
-            },
-          }, {
-            accessType: [req.decoded.role, 'public', 'private']
-          }]
-        },
-        attributes: ['title', 'content', 'id', 'accessType', 'createdAt']
-      };
-    } else {
-      query = {
-        where: {
-          $and: [{
-            title: {
-              $ilike: `%${searchString}%`
-            }
-          },
-          {
-            accessType: [req.decoded.role, 'public']
-          }
-          ]
-        },
-        attributes: ['title', 'content', 'id', 'accessType', 'createdAt']
-      };
-    }
+    const query = Helpers.documentSearchQuery(req, req.decoded.role);
     Document.findAll(query)
       .then((document) => {
         const message = 'Document found!';
@@ -151,7 +175,7 @@ class DocsController {
         }
         return res.status(200).send({ message, document });
       })
-      .catch(error => res.status(400).send(error));
+      .catch(error => res.status(500).send(error));
   }
 }
 
