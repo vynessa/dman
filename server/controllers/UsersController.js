@@ -9,7 +9,7 @@ class UsersController {
    * @description
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} User
    * @memberof UsersController
    */
   static registerUser(req, res) {
@@ -42,7 +42,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {void}
+   * @returns {object} User
    * @memberof UsersController
    */
   static loginUser(req, res) {
@@ -94,7 +94,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static createUser(req, res) {
@@ -113,7 +113,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static getUsers(req, res) {
@@ -142,7 +142,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static findUser(req, res) {
@@ -179,7 +179,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof DocsController
    */
   static findUserDocuments(req, res) {
@@ -212,7 +212,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} response
+   * @returns {object} User
    * @memberof UsersController
    */
   static updateUser(req, res) {
@@ -277,7 +277,7 @@ class UsersController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} user
+   * @returns {object} User
    * @memberof UsersController
    */
   static searchUsers(req, res) {

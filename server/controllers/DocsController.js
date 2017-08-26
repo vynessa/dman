@@ -42,7 +42,7 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} document
+   * @returns {object} Document
    * @memberof DocsController
    */
   static getDocuments(req, res) {
@@ -66,7 +66,7 @@ class DocsController {
    * @static
    * @param {any} req
    * @param {any} res
-   * @returns {object} document
+   * @returns {object} Document
    * @memberof DocsController
    */
   static findDocument(req, res) {
@@ -99,7 +99,7 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} user
+   * @returns {object} Document
    * @memberof DocsController
    */
   static updateDocument(req, res) {
@@ -116,7 +116,7 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} reponse
+   * @returns {object} response
    * @memberof DocsController
    */
   static deleteDocument(req, res) {
@@ -154,7 +154,7 @@ class DocsController {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} document
+   * @returns {object} Document
    * @memberof DocsController
    */
   static searchDocuments(req, res) {

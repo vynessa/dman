@@ -43,7 +43,7 @@ class Helpers {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} user
+   * @returns {object} User
    * @memberof Helpers
    */
   static updateUserHelper(req, res) {
@@ -140,7 +140,7 @@ class Helpers {
    * @static
    * @param {object} req
    * @param {object} res
-   * @returns {object} document
+   * @returns {object} Document
    * @memberof Helpers
    */
   static updateDocumentHelper(req, res) {
@@ -265,7 +265,7 @@ class Helpers {
    * @static
    * @param {any} req
    * @param {any} errorMessage
-   * @returns {object} error
+   * @returns {object} errors
    * @memberof Helpers
    */
   static formValidator(req, errorMessage) {
@@ -298,7 +298,7 @@ class Helpers {
    * @static
    * @param {any} req
    * @param {any} role
-   * @returns {object} search result
+   * @returns {object} query
    * @memberof Helpers
    */
   static documentSearchQuery(req, role) {
