@@ -6,7 +6,7 @@ import { Document } from '../models';
  */
 class DocsController {
   /**
-   * @description
+   * @description Registered and signed in users can create documents
    * @static
    * @param {object} req
    * @param {object} res
@@ -38,7 +38,8 @@ class DocsController {
   }
 
   /**
-   * @description
+   * @description Users can get any document that matches
+      their role or access type
    * @static
    * @param {object} req
    * @param {object} res
@@ -46,23 +47,62 @@ class DocsController {
    * @memberof DocsController
    */
   static getDocuments(req, res) {
+    if (req.query.limit || req.query.offset) {
+      return Helpers.limitAndOffsetValidator(
+        req.query.limit,
+        req.query.offset,
+        res
+      );
+    }
     const query = {
       where: {
-        accessType: [req.decoded.role, 'public']
-      }
+        $or: [
+          {
+            userId: req.decoded.id
+          },
+          {
+            accessType: [req.decoded.role, 'public']
+          }
+        ]
+      },
+      attributes: ['id', 'title', 'owner', 'accessType', 'createdAt']
     };
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
     if (req.decoded.role === 'admin') {
-      return Document.findAll()
-        .then(documents => Helpers.getDocsHelper(res, documents))
-        .catch(error => res.status(500).send(error));
-    }
-    Document.findAll(query)
-      .then(documents => Helpers.getDocsHelper(res, documents))
+      return Document.findAll().then((totalDocs) => {
+        const totalDocsCount = totalDocs.length;
+        return Document.findAll({
+          offset,
+          limit,
+          attributes: query.attributes
+        }).then(
+          documents => Helpers.getDocsHelper(
+            res, documents,
+            limit, offset, totalDocsCount
+          ));
+      })
       .catch(error => res.status(500).send(error));
+    }
+    return Document.findAll(query).then((totalDocs) => {
+      const totalDocsCount = totalDocs.length;
+      return Document.findAll({
+        offset,
+        limit,
+        where: query.where,
+        attributes: query.attributes
+      }).then(
+        documents => Helpers.getDocsHelper(
+          res, documents,
+          limit, offset, totalDocsCount
+        ));
+    })
+    .catch(error => res.status(500).send(error));
   }
 
   /**
-   * @description
+   * @description Users can find documents by id, matching with theirs
+      while an admin can find any document inclusive of theirs.
    * @static
    * @param {any} req
    * @param {any} res
@@ -95,7 +135,8 @@ class DocsController {
   }
 
   /**
-   * @description
+   * @description Users can only update (a) document(s)
+      that matches their id
    * @static
    * @param {object} req
    * @param {object} res
@@ -112,7 +153,8 @@ class DocsController {
   }
 
   /**
-   * @description
+   * @description Users can delete documents matching their id
+      while an admin can delete ant document
    * @static
    * @param {object} req
    * @param {object} res
@@ -150,7 +192,8 @@ class DocsController {
   }
 
   /**
-   * @description
+   * @description Enables users search through their documents
+      while an admin can search through all documents
    * @static
    * @param {object} req
    * @param {object} res
@@ -158,24 +201,47 @@ class DocsController {
    * @memberof DocsController
    */
   static searchDocuments(req, res) {
+    const query = Helpers.documentSearchQuery(req, req.decoded.role);
+
+    if (req.query.limit || req.query.offset) {
+      return Helpers.limitAndOffsetValidator(
+        req.query.limit,
+        req.query.offset,
+        res
+      );
+    }
     if (!req.query.q) {
       return res.status(400).send({
         message: 'Please enter a keyword'
       });
     }
-    const query = Helpers.documentSearchQuery(req, req.decoded.role);
-    Document.findAll(query)
-      .then((document) => {
-        const message = 'Document found!';
-
-        if (document[0] === undefined) {
-          return res
-            .status(404)
-            .send({ message: 'This document does not exist!' });
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
+    Document.findAll(query).then((totalDocs) => {
+      const totalDocsCount = totalDocs.length;
+      return Document.findAll({
+        offset,
+        limit,
+        where: query.where,
+        attributes: query.attributes
+      }).then((document) => {
+        if (document.length === 0) {
+          return res.status(404).send({
+            message: 'This document does not exist!'
+          });
         }
-        return res.status(200).send({ message, document });
-      })
-      .catch(error => res.status(500).send(error));
+        const metaData = Helpers.pagination(
+          limit, offset,
+          totalDocsCount, document
+        );
+        return res.status(200).send({
+          message: `Number of documents found: ${document.length}`,
+          document,
+          metaData
+        });
+      });
+    })
+    .catch(error => res.status(500).send(error));
   }
 }
 
