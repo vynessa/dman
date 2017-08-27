@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 /**
-  * verifyToken: This verifies all routes that starts with /api
+  * @description verifyToken: This verifies all routes that starts with /api
   *  It checks if there is token and checks if the token is valid
   *  if the token is valid then it decodes it and send to the next routes
   * @function verifyToken

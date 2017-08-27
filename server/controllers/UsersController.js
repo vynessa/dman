@@ -6,7 +6,8 @@ import { User, Document } from '../models';
  */
 class UsersController {
   /**
-   * @description
+   * @description This enables users to register on the
+      application and get a generated JWT
    * @param {object} req
    * @param {object} res
    * @returns {object} User
@@ -38,7 +39,8 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description This allow users login into the
+      application if registered
    * @static
    * @param {object} req
    * @param {object} res
@@ -93,7 +95,7 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description This enables Admin user only to create other users
    * @static
    * @param {object} req
    * @param {object} res
@@ -112,7 +114,8 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description Enables admin users only to get all
+      users in the application
    * @static
    * @param {object} req
    * @param {object} res
@@ -125,26 +128,46 @@ class UsersController {
         message: 'Unauthorized access! All users can only be viewed by an admin'
       });
     }
+    if (req.query.limit || req.query.offset) {
+      return Helpers.limitAndOffsetValidator(
+        req.query.limit,
+        req.query.offset,
+        res
+      );
+    }
     const query = {
-      attributes: ['fullName', 'id', 'role', 'createdAt']
+      attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
-    User.findAll(query)
-      .then((users) => {
+    return User.findAll(query).then((totalUsers) => {
+      const totalUsersCount = totalUsers.length;
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
+
+      return User.findAll({
+        offset,
+        limit,
+        attributes: query.attributes
+      }).then((users) => {
         if (users.length === 0) {
           return res.status(404).send({
             message: 'No user found!'
           });
         }
-        res.status(200).json({
+        const metaData = Helpers.pagination(
+          limit, offset, totalUsersCount, users
+        );
+        res.status(200).send({
           message: `Number of users found: ${users.length}`,
-          users
+          users,
+          metaData
         });
       })
       .catch(error => res.status(500).send(error));
+    });
   }
 
   /**
-   * @description
+   * @description Enables only an admin to get a user by id
    * @static
    * @param {object} req
    * @param {object} res
@@ -181,7 +204,8 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description Users can get all documents belonging to them by id
+      while an admin can get any user's documents by id
    * @static
    * @param {object} req
    * @param {object} res
@@ -189,24 +213,52 @@ class UsersController {
    * @memberof DocsController
    */
   static findUserDocuments(req, res) {
-    const userId = req.params.id;
-    if (!Number.isInteger(Number(userId))) {
+    const id = req.params.id;
+    const query = {
+      where: {
+        userId: id,
+      },
+      attributes: ['id', 'title', 'owner', 'accessType', 'createdAt']
+    };
+    if (req.query.limit || req.query.offset) {
+      return Helpers.limitAndOffsetValidator(
+        req.query.limit,
+        req.query.offset,
+        res
+      );
+    }
+    if (!Number.isInteger(Number(id))) {
       return Helpers.idValidator(res);
     }
-    if (
-      req.decoded.role === 'admin' || Number(req.decoded.id) === Number(userId)
-    ) {
-      const query = {
-        where: {
-          id: userId
-        }
-      };
-      return Document.findAll(query).then((document) => {
-        if (document.length === 0) {
-          return res.status(404).send({ message: 'No document found!' });
-        }
-        return res.status(200).send({ message: 'Document found!', document });
-      });
+    if (req.decoded.role === 'admin'
+      || Number(req.decoded.id) === Number(id)) {
+      return Document.findAll(query).then((totalDocs) => {
+        const totalDocsCount = totalDocs.length;
+        const limit = req.query.limit || 10;
+        const offset = req.query.offset || 0;
+        return Document.findAll({
+          offset,
+          limit,
+          where: query.where,
+          attributes: query.attributes
+        })
+        .then((document) => {
+          if (document.length === 0) {
+            return res.status(404).send({
+              message: 'No document found!'
+            });
+          }
+          const metaData = Helpers.pagination(
+            limit, offset,
+            totalDocsCount, document
+          );
+          return res.status(200).send({
+            message: `Number of documents found: ${document.length}`,
+            document,
+            metaData
+          });
+        });
+      }).catch(error => res.status(500).send(error));
     }
     return res.status(403).send({
       message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'
@@ -214,7 +266,8 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description Enables users update their profile except their role
+      while the admin can update any user's profile
    * @static
    * @param {object} req
    * @param {object} res
@@ -240,7 +293,8 @@ class UsersController {
   }
 
   /**
-   * @description
+   * @description Enables a user delete his profile
+      while an admin can delete all
    * @static
    * @param {object} req
    * @param {object} res
@@ -279,7 +333,7 @@ class UsersController {
   }
 
   /**
-   * description searchUsers: Search for a particular user
+   * @description Enables the admin search for a particular user
    * @static
    * @param {object} req
    * @param {object} res
@@ -287,24 +341,14 @@ class UsersController {
    * @memberof UsersController
    */
   static searchUsers(req, res) {
-    const searchString = Helpers.stringFilter(req.query.q);
-    const query = {
-      where: {
-        $or: [
-          {
-            fullName: {
-              $ilike: `%${searchString}%`
-            }
-          },
-          {
-            email: {
-              $ilike: `%${searchString}%`
-            }
-          }
-        ]
-      },
-      attributes: ['fullName', 'email', 'id']
-    };
+    const query = Helpers.userSearchQuery(req);
+    if (req.query.limit || req.query.offset) {
+      return Helpers.limitAndOffsetValidator(
+        req.query.limit,
+        req.query.offset,
+        res
+      );
+    }
     if (!req.query.q) {
       return res.status(400).send({
         message: 'Please enter a keyword'
@@ -312,15 +356,32 @@ class UsersController {
     }
     if (req.decoded.role === 'admin') {
       return User.findAll(query)
-        .then((user) => {
-          if (user[0] === undefined) {
+        .then((users) => {
+          const totalUsersCount = users.length;
+          const limit = req.query.limit || 10;
+          const offset = req.query.offset || 0;
+          if (users.length === 0) {
             return res.status(404).send({
               message: 'User not found!'
             });
           }
-          return res.status(200).json({
-            message: 'User found successfully',
-            user
+          return User.findAll({
+            offset,
+            limit,
+            where: query.where,
+            attributes: query.attributes
+          }).then((usersCount) => {
+            const metaData = Helpers.pagination(
+              limit,
+              offset,
+              totalUsersCount,
+              usersCount
+            );
+            return res.status(200).json({
+              message: 'User found!',
+              usersCount,
+              metaData
+            });
           });
         })
         .catch(error => res.status(500).send(error));

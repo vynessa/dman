@@ -343,6 +343,25 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
+  describe('GET `/api/v1/documents/?limit={}`', () => {
+    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/documents/?limit=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the limit and offset as an integer');
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+  });
+
   describe('GET `/api/v1/documents/`', () => {
     it('should respond with `OK` if the admin queries all documents and one or more exist', (done) => {
       api
@@ -466,6 +485,25 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
+  describe('GET `/api/v1/search/documents/?q={}&limit={}`', () => {
+    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/search/documents/?q=Politik&limit=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the limit and offset as an integer');
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+  });
+
   describe('GET `/api/v1/search/documents`', () => {
     it('should respond with `OK` one or more document is/are found in the search array', (done) => {
       api
@@ -476,7 +514,7 @@ describe('Document Controller Test Suite', () => {
       .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Document found!');
+          assert(res.body.document[0].title === 'Politik');
         } else {
           assert.ifError(err);
         }

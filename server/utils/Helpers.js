@@ -1,13 +1,12 @@
 import { User, Document } from '../models';
 
 /**
- *
- *
  * @class Helpers
  */
 class Helpers {
   /**
-   * @description
+   * @description helper method which creates a user and returns
+      a token and a user object
    * @static
    * @param {object} req
    * @param {object} res
@@ -42,7 +41,8 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description Helper method which updates a user's profile
+      and returns in a new object containing the new profile
    * @static
    * @param {object} req
    * @param {object} res
@@ -103,7 +103,8 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description Helper method which enables a user create
+      a document and returns the new document object
    * @static
    * @param {object} req
    * @param {object} res
@@ -145,7 +146,8 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description Update a user's document on request by id
+      and returns an object with the updated document
    * @static
    * @param {object} req
    * @param {object} res
@@ -214,27 +216,35 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description This checks the length of the documents
+      array and responds with the appropriate message
    * @static
-   * @param {object} res
-   * @param {object} documents
+   * @param {any} res
+   * @param {any} documents
+   * @param {any} limit
+   * @param {any} offset
+   * @param {any} totalDocsCount
    * @returns {object} documents
    * @memberof Helpers
    */
-  static getDocsHelper(res, documents) {
+  static getDocsHelper(res, documents, limit, offset, totalDocsCount) {
     if (documents.length === 0) {
       return res.status(404).send({
         message: 'No document found!'
       });
     }
+    const metaData = Helpers.pagination(
+      limit, offset, totalDocsCount, documents);
     return res.status(200).send({
       message: `Number of documents found: ${documents.length}`,
-      documents
+      documents,
+      metaData
     });
   }
 
   /**
-   * @description
+   * @description Validates any route which requires and id
+      for the correct id type (integer)
    * @param {object} response
    * @returns {object} response
    * @memberof Helpers
@@ -246,7 +256,9 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description This filters any string by first
+      trimming, checking for special characters and
+      converts to lowercase
    * @static
    * @param {string} str
    * @returns {string} str
@@ -257,7 +269,8 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description This verifies the access type passed in
+      by a user when creating a document
    * @static
    * @param {string} role
    * @param {string} accessType
@@ -274,7 +287,51 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description This enables the user set a limit to
+      the number of record to be viewed per page
+   * @static
+   * @param {int} limit
+   * @param {int} offset
+   * @param {int} totalCount
+   * @param {object} item
+   * @returns {object} metaData
+   * @memberof Helpers
+   */
+  static pagination(limit, offset, totalCount, item) {
+    let pageCount = Math.round(totalCount / limit);
+    pageCount = (pageCount < 1 && totalCount > 0) ? 1 : pageCount;
+    const page = Math.round(offset / limit) + 1;
+    const metaData = {
+      page,
+      pageCount,
+      count: item.length,
+      totalCount,
+    };
+    return metaData;
+  }
+
+  /**
+   * @description Verifies if the limit and offset
+      is of type int
+   * @static
+   * @param {int} limit
+   * @param {int} offset
+   * @param {object} response
+   * @returns {object} response
+   * @memberof Helpers
+   */
+  static limitAndOffsetValidator(limit, offset, response) {
+    if (!Number.isInteger(Number(limit))
+      || !Number.isInteger(Number(offset))) {
+      return response.status(400).send({
+        message: 'Please set the limit and offset as an integer'
+      });
+    }
+  }
+
+  /**
+   * @description Verifies that every field in the body
+      of a form has the accurate data type and has content
    * @static
    * @param {any} req
    * @param {any} errorMessage
@@ -309,7 +366,36 @@ class Helpers {
   }
 
   /**
-   * @description
+   * @description Search query for the users controller
+   * @static
+   * @param {any} req
+   * @returns {object} query
+   * @memberof Helpers
+   */
+  static userSearchQuery(req) {
+    const searchString = Helpers.stringFilter(req.query.q);
+    const query = {
+      where: {
+        $or: [
+          {
+            fullName: {
+              $ilike: `%${searchString}%`
+            }
+          },
+          {
+            email: {
+              $ilike: `%${searchString}%`
+            }
+          }
+        ]
+      },
+      attributes: ['id', 'fullName', 'role', 'createdAt']
+    };
+    return query;
+  }
+
+  /**
+   * @description Search query for the documents controller
    * @static
    * @param {any} req
    * @param {any} role
@@ -352,7 +438,6 @@ class Helpers {
         attributes: ['title', 'content', 'id', 'accessType', 'createdAt']
       };
     }
-
     return query;
   }
 }

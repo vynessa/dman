@@ -5,7 +5,7 @@ import DocsController from './../controllers/DocsController';
 const router = express.Router();
 
 router.get('/api/v1', (req, res) => res.status(200).send({
-  message: 'Welcome to the dMan API!',
+  message: 'Welcome to the dMan API!'
 }));
 
 // Users endpoint
