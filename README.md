@@ -31,18 +31,10 @@ dman is a full stack document management system which uses roles and priviledges
 
 
 ## Getting started with the project
-  * Requirements
-    - To run the app locally, have `node.js` installed
-  * How to setup the project/Installation/Configuration
-    - Clone the repo `git clone https://github.com/vynessa/dman.git`
-    - Navigate to the `dman` directory
-    - Run `npm install` to install all dependencies
-    - Run `npm start` to run the application
-  * How to run tests
-    - Run `npm test` 
+* Visit the [Wiki](https://github.com/vynessa/dman/wiki/Getting-Started-with-the-Project) to find out how to make use of this project.
 
 ## API Documentation
-The API has routes, each dedicated to a single task that uses HTTP response codes to indicate request success or errors. The full document can be found [here](https://dman.herokuapp.com)
+The API has routes, each dedicated to a single task that uses HTTP response codes to indicate request success or errors. The full documentation can be found [here](https://dman.herokuapp.com)
 
 ## Naming conventions
 * Visit the [Wiki](https://github.com/vynessa/dman/wiki) to find branch, commit messages and pull request naming conventions.
@@ -53,34 +45,14 @@ The API has routes, each dedicated to a single task that uses HTTP response code
 * Create your feature branch - `git checkout -b your-branch-name`
 * Commit your changes - `git commit -m “[Enter message]“` or `git commit` for the interactive interface
 * Push to the remote branch - `git push origin your-branch-name`
-* Open a pull request (See [wiki](https://github.com/vynessa/dman/wiki) for the pull request naming convention)
+* Open a pull request (See [wiki](https://github.com/vynessa/dman/wiki/Pull-Request-Naming-and-Description-Convention) for pull request(s) naming convention)
 
 Click this link to visit the hosted app [dman](https://dman.herokuapp.com)
 
 I look forward to your pull requests :)
 
 ## License
-MIT License
-
-Copyright (c) 2017 Vanessa Ejikeme
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[MIT License](https://github.com/vynessa/dman/blob/develop/LICENSE)
 
 ## Author
 * **[Vanessa Ejikeme](vanessa.ejikeme@gmail.com)**
