@@ -281,6 +281,25 @@ describe('Users Controller Test suite', () => {
     });
   });
 
+  describe('GET `/api/v1/users/?limit={}`', () => {
+    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/users/?limit=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the limit and offset as an integer');
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+  });
+
   describe('GET `/api/v1/users/`', () => {
     it('should respond with `OK` if the admin queries the database for all users and one or more are found', (done) => {
       api
@@ -404,6 +423,25 @@ describe('Users Controller Test suite', () => {
     });
   });
 
+  describe('GET `/api/v1/users/:id/documents?limit={}`', () => {
+    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/users/1/documents?limit=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the limit and offset as an integer');
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+  });
+
   describe('GET `/api/v1/users/:id/documents`', () => {
     it('should respond with `Bad request` if the id equals a non-integer', (done) => {
       api
@@ -471,6 +509,25 @@ describe('Users Controller Test suite', () => {
         }
         done();
       });
+    });
+  });
+
+  describe('GET `/api/v1/search/users/?q={}&limit={}`', () => {
+    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/search/users/?q=admin&limit=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(400)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the limit and offset as an integer');
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
     });
   });
 
