@@ -476,7 +476,7 @@ describe('Document Controller Test Suite', () => {
       .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Document found!');
+          assert(res.body.document[0].title === 'Politik');
         } else {
           assert.ifError(err);
         }

@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { assert } from 'chai';
 import app from '../../build/server';
-import { User } from '../models';
 
 const api = request(app);
 
@@ -446,10 +445,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'No document found!');
+          assert(res.body.document[0].title === 'Trump has been covfefed');
         } else {
           assert.ifError(err);
         }
@@ -502,7 +501,7 @@ describe('Users Controller Test suite', () => {
       .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'User found successfully');
+          assert(res.body.message === 'User found!');
         } else {
           assert.ifError(err);
         }
