@@ -248,6 +248,9 @@
                   <li>
                     <a href="#get-all-users" class="toc-h2 toc-link" data-title="Users">Get All Users</a>
                   </li>
+                  <li>
+                    <a href="#search-users" class="toc-h2 toc-link" data-title="Users">Search Users</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -481,26 +484,29 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Number of users found: 2"</span><span class="p">,</span>
     <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@admin.com"</span><span class="p">,</span>
             <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-            <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"$2a$08$LvBRI3D.i6M8xi25s6iLpe37mMao2fvmUK4vcdItuMxaEhfh.V7Ve"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span><span class="p">,</span>
-            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
             <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"randomUser"</span><span class="p">,</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
             <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"random123@random.com"</span><span class="p">,</span>
             <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
-            <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"$2a$08$XyE1LryFUDc/LMDb3qzyveZX/anPFM8hzAWdCUAtwJUiTQ5g2n6aK"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span><span class="p">,</span>
-            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span>
         <span class="p">}</span>
-    <span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-7'>Request</h3>
 <ul>
@@ -516,6 +522,51 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <aside class="notice">
  Only and admin user can access this route.
 </aside>
+<h2 id='search-users'>Search Users</h2>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User found!"</span><span class="p">,</span>
+    <span class="s2">"usersCount"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-27"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-8'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>api/v1/search/users/?q=admin</code></li>
+<li>Requires: Authentication</li>
+</ul>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>q</td>
+<td>&quot;&quot;</td>
+<td>Search query.</td>
+</tr>
+</tbody></table>
+<h3 id='response-8'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
 <h1 id='documents'>Documents</h1><h2 id='create-document'>Create Document</h2>
 <blockquote>
 <p>Request:</p>
@@ -556,16 +607,15 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <p>Sample JSON structured response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="p">[</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Number of documents found: 3"</span><span class="p">,</span>
+    <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Politik"</span><span class="p">,</span>
             <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Waterside and plastic lights. All going down memory lane"</span><span class="p">,</span>
             <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
             <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
-            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">},</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -573,9 +623,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
             <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"New dawn. New day."</span><span class="p">,</span>
             <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
             <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
-            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
-            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">},</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
@@ -583,11 +631,15 @@ You must replace the<code>token</code> with the one gotten after authentication.
             <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"the best scene ever."</span><span class="p">,</span>
             <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
             <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-            <span class="s2">"userId"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span><span class="p">,</span>
-            <span class="s2">"updatedAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
         <span class="p">}</span>
-    <span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">3</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-2'>Request</h3>
 <ul>
@@ -682,16 +734,22 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <p>Response:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Document found!"</span><span class="p">,</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Number of documents found: 1"</span><span class="p">,</span>
     <span class="s2">"document"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Politik"</span><span class="p">,</span>
             <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Waterside and plastic lights. All going down memory lane"</span><span class="p">,</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
-            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-25"</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-27"</span>
         <span class="p">}</span>
-    <span class="p">]</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre><h3 id='request-6'>Request</h3>
 <ul>

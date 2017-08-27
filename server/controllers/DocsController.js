@@ -65,7 +65,7 @@ class DocsController {
           }
         ]
       },
-      attributes: ['id', 'title', 'owner', 'accessType', 'createdAt']
+      attributes: ['id', 'title', 'content', 'owner', 'accessType', 'createdAt']
     };
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;

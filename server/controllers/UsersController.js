@@ -136,7 +136,7 @@ class UsersController {
       );
     }
     const query = {
-      attributes: ['fullName', 'id', 'role', 'createdAt']
+      attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
     return User.findAll(query).then((totalUsers) => {
       const totalUsersCount = totalUsers.length;
