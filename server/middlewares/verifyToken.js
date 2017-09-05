@@ -12,7 +12,7 @@ import jwt from 'jsonwebtoken';
 const verifyToken = (req, res, next) => {
   if (req.url.startsWith('/users/auth') || req.url === '/') return next();
   if (!req.headers.authorization) {
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'Please set token in the header!'
     });
   }

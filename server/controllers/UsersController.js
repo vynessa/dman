@@ -5,6 +5,7 @@ import { User, Document } from '../models';
  * @class UsersController
  */
 class UsersController {
+
   /**
    * @description This enables users to register on the
       application and get a generated JWT
@@ -19,7 +20,9 @@ class UsersController {
     if (errors) {
       return res.status(400).send({
         message: 'Error while registering',
-        errors
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     User.find({
@@ -51,9 +54,11 @@ class UsersController {
     const errorMessage = 'loginError';
     const errors = Helpers.formValidator(req, errorMessage);
     if (errors) {
-      return res.status(401).send({
+      return res.status(400).send({
         message: 'Error while Logging in',
-        errors
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     User.find({
@@ -85,7 +90,7 @@ class UsersController {
         return res.status(200).send({
           token,
           user: {
-            name: returningUser.fullName,
+            fullName: returningUser.fullName,
             id: returningUser.id,
             role: returningUser.role
           }
@@ -95,7 +100,7 @@ class UsersController {
   }
 
   /**
-   * @description This enables Admin user only to create other users
+   * @description This enables the admin user only to create other users
    * @static
    * @param {object} req
    * @param {object} res
@@ -103,14 +108,12 @@ class UsersController {
    * @memberof UsersController
    */
   static createUser(req, res) {
-    if (req.headers.authorization) {
-      if (req.decoded.role === 'user') {
-        return res.status(403).send({
-          message: 'Unathorized access! Only an admin can create a user'
-        });
-      }
-      return UsersController.registerUser(req, res);
+    if (req.decoded.role === 'user') {
+      return res.status(403).send({
+        message: 'Unathorized access! Only an admin can create a user'
+      });
     }
+    return UsersController.registerUser(req, res);
   }
 
   /**
@@ -138,36 +141,34 @@ class UsersController {
     const query = {
       attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
-    return User.findAll(query).then((totalUsers) => {
-      const totalUsersCount = totalUsers.length;
-      const limit = req.query.limit || 10;
-      const offset = req.query.offset || 0;
+    const limit = req.query.limit || 10;
+    const offset = req.query.offset || 0;
 
-      return User.findAll({
-        offset,
-        limit,
-        attributes: query.attributes
-      }).then((users) => {
-        if (users.length === 0) {
-          return res.status(404).send({
-            message: 'No user found!'
-          });
-        }
-        const metaData = Helpers.pagination(
-          limit, offset, totalUsersCount, users
-        );
-        res.status(200).send({
-          message: `Number of users found: ${users.length}`,
-          users,
-          metaData
+    return User.findAll({
+      offset,
+      limit,
+      attributes: query.attributes
+    }).then((users) => {
+      if (users.length === 0) {
+        return res.status(404).send({
+          message: 'No user found!'
         });
-      })
-      .catch(error => res.status(500).send(error));
-    });
+      }
+      const totalUsersCount = users.length;
+      const metaData = Helpers.pagination(
+        limit, offset, totalUsersCount, users
+      );
+      res.status(200).send({
+        message: `Number of users found: ${totalUsersCount}`,
+        users,
+        metaData
+      });
+    })
+    .catch(error => res.status(500).send(error));
   }
 
   /**
-   * @description Enables only an admin to get a user by id
+   * @description Enables only an admin get a user by id
    * @static
    * @param {object} req
    * @param {object} res
@@ -232,31 +233,24 @@ class UsersController {
     }
     if (req.decoded.role === 'admin'
       || Number(req.decoded.id) === Number(id)) {
-      return Document.findAll(query).then((totalDocs) => {
-        const totalDocsCount = totalDocs.length;
-        const limit = req.query.limit || 10;
-        const offset = req.query.offset || 0;
-        return Document.findAll({
-          offset,
-          limit,
-          where: query.where,
-          attributes: query.attributes
-        })
-        .then((document) => {
-          if (document.length === 0) {
-            return res.status(404).send({
-              message: 'No document found!'
-            });
-          }
-          const metaData = Helpers.pagination(
-            limit, offset,
-            totalDocsCount, document
-          );
-          return res.status(200).send({
-            message: `Number of documents found: ${document.length}`,
-            document,
-            metaData
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
+      return Document.findAll(query)
+      .then((documents) => {
+        if (documents.length === 0) {
+          return res.status(404).send({
+            message: 'No document found!'
           });
+        }
+        const totalDocsCount = documents.length;
+        const metaData = Helpers.pagination(
+          limit, offset,
+          totalDocsCount, documents
+        );
+        return res.status(200).send({
+          message: `Number of documents found: ${totalDocsCount}`,
+          documents,
+          metaData
         });
       }).catch(error => res.status(500).send(error));
     }
@@ -277,10 +271,6 @@ class UsersController {
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
-    }
-    const user = new User();
-    if (req.body.password) {
-      req.body.password = user.generateHash(req.body.password);
     }
     if (req.body.role && req.decoded.role === 'user') {
       return res.status(403).send({
@@ -355,36 +345,33 @@ class UsersController {
       });
     }
     if (req.decoded.role === 'admin') {
-      return User.findAll(query)
-        .then((users) => {
-          const totalUsersCount = users.length;
-          const limit = req.query.limit || 10;
-          const offset = req.query.offset || 0;
-          if (users.length === 0) {
-            return res.status(404).send({
-              message: 'User not found!'
-            });
-          }
-          return User.findAll({
-            offset,
-            limit,
-            where: query.where,
-            attributes: query.attributes
-          }).then((usersCount) => {
-            const metaData = Helpers.pagination(
-              limit,
-              offset,
-              totalUsersCount,
-              usersCount
-            );
-            return res.status(200).json({
-              message: 'User found!',
-              usersCount,
-              metaData
-            });
+      const limit = req.query.limit || 10;
+      const offset = req.query.offset || 0;
+      return User.findAll({
+        offset,
+        limit,
+        where: query.where,
+        attributes: query.attributes
+      }).then((users) => {
+        const totalUsersCount = users.length;
+        const metaData = Helpers.pagination(
+          limit,
+          offset,
+          totalUsersCount,
+          users
+        );
+        if (users.length === 0) {
+          return res.status(404).send({
+            message: 'User not found!'
           });
-        })
-        .catch(error => res.status(500).send(error));
+        }
+        return res.status(200).json({
+          message: `Number of users found: ${totalUsersCount}`,
+          users,
+          metaData
+        });
+      })
+    .catch(error => res.status(500).send(error));
     }
     return res.status(403).send({
       message: 'Unauthorized access! ¯¯|_(ツ)_|¯¯'

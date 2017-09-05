@@ -50,10 +50,10 @@ describe('Users Controller Test suite', () => {
         .get('/api/v1/')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(200)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Welcome to the dMan API!');
+            assert(res.status === 200);
           } else {
             assert.ifError(err);
           }
@@ -73,10 +73,10 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'vanessa'
         })
-        .expect(409)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'This user already exists!');
+            assert(res.status === 409);
           } else {
             assert.ifError(err);
           }
@@ -93,10 +93,10 @@ describe('Users Controller Test suite', () => {
           fullName: 'Vanessa Willams',
           password: 'vanessa'
         })
-        .expect(400)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.errors[0].msg === 'An email is required');
+            assert(res.body.errors.msg === 'An email is required');
+            assert(res.status === 400);
           } else {
             const error = new Error('Registration error');
             assert.ifError(error);
@@ -115,10 +115,10 @@ describe('Users Controller Test suite', () => {
         .send({
           email: 'info@admin.com'
         })
-        .expect(401)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.errors[0].msg === 'Please enter a password');
+            assert(res.body.errors.msg === 'Please enter a password');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -135,10 +135,10 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'adminhere'
         })
-        .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.user.name === 'Admin');
+            assert(res.body.user.fullName === 'Admin');
+            assert(res.status === 200);
           } else {
             assert.ifError(err);
           }
@@ -155,10 +155,10 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'hnbnhg'
         })
-        .expect(401)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
+            assert(res.status === 401);
           } else {
             assert.ifError(err);
           }
@@ -175,10 +175,10 @@ describe('Users Controller Test suite', () => {
           email: 'vanessa.wiliams@gmail.com',
           password: 'vanessa'
         })
-        .expect(401)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Incorrect email or password');
+            assert(res.status === 401);
           } else {
             assert.ifError(err);
           }
@@ -201,10 +201,10 @@ describe('Users Controller Test suite', () => {
           email: 'femi@gmail.com',
           password: 'femimedale'
         })
-        .expect(201)
         .end((err, res) => {
           if (!err) {
             assert(res.body.user.email === 'femi@gmail.com');
+            assert(res.status === 201);
           } else {
             assert.ifError(err);
           }
@@ -223,10 +223,10 @@ describe('Users Controller Test suite', () => {
           email: 'joy@gmail.com',
           password: 'joysmith'
         })
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Invalid token. Please login :)');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -244,10 +244,10 @@ describe('Users Controller Test suite', () => {
           email: 'maggie@gmail.com',
           password: 'MaggieG'
         })
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Please set token in the header!');
+            assert(res.status === 401);
           } else {
             assert.ifError(err);
           }
@@ -266,13 +266,13 @@ describe('Users Controller Test suite', () => {
           email: 'femi@gmail.com',
           password: 'famiily'
         })
-        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(
               res.body.message ===
                 'Unathorized access! Only an admin can create a user'
             );
+            assert(res.status === 403);
           } else {
             assert.ifError(err);
           }
@@ -288,10 +288,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Please set the limit and offset as an integer');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -307,10 +307,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(200)
         .end((err, res) => {
           if (!err) {
             assert(res.body.users.length >= 1);
+            assert(res.status === 200);
           } else {
             assert.ifError(err);
           }
@@ -324,10 +324,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${userToken}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access! All users can only be viewed by an admin');
+            assert(res.status === 403);
           } else {
             assert.ifError(err);
           }
@@ -343,10 +343,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(403)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! Only an admin can get a user');
+          assert(res.status === 403);
         } else {
           assert.ifError(err);
         }
@@ -360,10 +360,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
           assert(res.body.user.id === 1);
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -377,10 +377,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
           assert(res.body.user.id === 1);
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -394,10 +394,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'User not found!');
+          assert(res.status === 404);
         } else {
           assert.ifError(err);
         }
@@ -411,10 +411,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+          assert(res.status === 400);
         } else {
           assert.ifError(err);
         }
@@ -430,10 +430,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Please set the limit and offset as an integer');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -449,10 +449,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+          assert(res.status === 400);
         } else {
           assert.ifError(err);
         }
@@ -466,10 +466,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.document[0].title === 'Politik');
+          assert(res.body.documents[0].title === 'Politik');
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -477,16 +477,16 @@ describe('Users Controller Test suite', () => {
       });
     });
 
-    it('should respond with `Not found` if no document(s) is found', (done) => {
+    it('should respond with `OK` if an admin queries any user\'s document(s)', (done) => {
       api
       .get('/api/v1/users/2/documents')
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.document[0].title === 'Trump has been covfefed');
+          assert(res.body.documents[0].title === 'Trump has been covfefed');
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -500,10 +500,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(403)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
+          assert(res.status === 403);
         } else {
           assert.ifError(err);
         }
@@ -519,10 +519,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Please set the limit and offset as an integer');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -538,10 +538,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Please enter a keyword');
+          assert(res.status === 400);
         } else {
           assert.ifError(err);
         }
@@ -555,10 +555,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'User found!');
+          assert(res.body.users[0].fullName === 'Admin');
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -572,10 +572,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(403)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
+          assert(res.status === 403);
         } else {
           assert.ifError(err);
         }
@@ -589,10 +589,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'User not found!');
+          assert(res.status === 404);
         } else {
           assert.ifError(err);
         }
@@ -612,10 +612,10 @@ describe('Users Controller Test suite', () => {
           fullName: 'Administrator',
           password: 'adminuser'
         })
-        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+            assert(res.status === 400);
           } else {
             assert.ifError(err);
           }
@@ -632,10 +632,10 @@ describe('Users Controller Test suite', () => {
         .send({
           fullName: 'Gold Williams'
         })
-        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
+            assert(res.status === 403);
           } else {
             assert.ifError(err);
           }
@@ -645,44 +645,22 @@ describe('Users Controller Test suite', () => {
 
     it('should respond with `Ok` if an admin updates a user\'s role', (done) => {
       api
-      .put('/api/v1/user/2')
+      .put('/api/v1/users/2')
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        fullName: 'Gold Ejikeme',
+        fullName: 'Gold Ejike',
         email: 'gold.ejike@gmail.com',
-        password: 'goldejike',
-        role: 'admin'
+        password: 'goldejike123',
       })
-      .expect(200)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Document Successfully Updated');
+          assert(res.body.message === 'Profile successfully updated');
+          assert(res.status === 200);
         }
         done();
       });
-    });
-
-    it('should respond with `Bad request` if a user updates his/her password with less than 7 characters', (done) => {
-      api
-        .put('/api/v1/users/2')
-        .set('Authorization', `${userToken}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Golden girl',
-          password: '09'
-        })
-        .expect(400)
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.errors[0].msg === 'Password must contain at least 7 characters');
-          } else {
-            assert.ifError(err);
-          }
-          done();
-        });
     });
 
     it('should respond with `Conflict` if a user updates his/her email with an existing email', (done) => {
@@ -694,10 +672,10 @@ describe('Users Controller Test suite', () => {
         .send({
           email: 'info@admin.com',
         })
-        .expect(409)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'This email already exists!');
+            assert(res.status === 409);
           } else {
             assert.ifError(err);
           }
@@ -715,10 +693,10 @@ describe('Users Controller Test suite', () => {
           fullName: 'Administrator',
           password: 'adminuser'
         })
-        .expect(404)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Sorry, the user does not exist!');
+            assert(res.status === 404);
           } else {
             assert.ifError(err);
           }
@@ -734,10 +712,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
+          assert(res.status === 400);
         } else {
           assert.ifError(err);
         }
@@ -751,10 +729,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'Yipee! User deleted successfully!');
+          assert(res.status === 200);
         } else {
           assert.ifError(err);
         }
@@ -768,10 +746,10 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(404)
       .end((err, res) => {
         if (!err) {
           assert(res.body.message === 'User not found! :(');
+          assert(res.status === 404);
         } else {
           assert.ifError(err);
         }
@@ -785,10 +763,10 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${userToken}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
-        .expect(403)
         .end((err, res) => {
           if (!err) {
             assert(res.body.message === 'Unathuorized Access! ¯¯|_(ツ)_|¯¯');
+            assert(res.status === 403);
           } else {
             assert.ifError(err);
           }

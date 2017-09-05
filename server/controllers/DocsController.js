@@ -18,7 +18,10 @@ class DocsController {
     const errors = Helpers.formValidator(req, errorMessage);
     if (errors) {
       return res.status(400).send({
-        message: 'Error occured while creating Document', errors
+        message: 'Error occured while creating Document',
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     Document.find({
@@ -39,7 +42,7 @@ class DocsController {
 
   /**
    * @description Users can get any document that matches
-      their role or access type
+   *  their role or access type
    * @static
    * @param {object} req
    * @param {object} res
@@ -54,48 +57,50 @@ class DocsController {
         res
       );
     }
-    const query = {
-      where: {
-        $or: [
-          {
-            userId: req.decoded.id
-          },
-          {
-            accessType: [req.decoded.role, 'public']
-          }
+
+    /**
+     * @description Query object which returns documents based on a user's id,
+     * role and document accesstype. For users with role 'user', only that
+     * user's documents, and documents with access type 'user' or 'public'
+     * are returned. Admin users have access to all documents
+     * @function
+     * @returns {object} query
+     */
+    const accessTypeQuery = () => {
+      const query = {
+        attributes: [
+          'id', 'title', 'content',
+          'owner', 'accessType',
+          'createdAt'
         ]
-      },
-      attributes: ['id', 'title', 'content', 'owner', 'accessType', 'createdAt']
+      };
+
+      if (req.decoded.role !== 'admin') {
+        query.where = {
+          $or: [
+            {
+              userId: req.decoded.id
+            },
+            {
+              accessType: [req.decoded.role, 'public']
+            }
+          ]
+        };
+        return query;
+      }
+      return query;
     };
+
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
-    if (req.decoded.role === 'admin') {
-      return Document.findAll().then((totalDocs) => {
-        const totalDocsCount = totalDocs.length;
-        return Document.findAll({
-          offset,
-          limit,
-          attributes: query.attributes
-        }).then(
-          documents => Helpers.getDocsHelper(
-            res, documents,
-            limit, offset, totalDocsCount
-          ));
-      })
-      .catch(error => res.status(500).send(error));
-    }
-    return Document.findAll(query).then((totalDocs) => {
-      const totalDocsCount = totalDocs.length;
-      return Document.findAll({
-        offset,
-        limit,
-        where: query.where,
-        attributes: query.attributes
-      }).then(
-        documents => Helpers.getDocsHelper(
-          res, documents,
-          limit, offset, totalDocsCount
-        ));
+
+    return Document.findAll(accessTypeQuery())
+    .then((documents) => {
+      const totalDocsCount = documents.length;
+      Helpers.getDocsHelper(
+       res, documents,
+       limit, offset, totalDocsCount
+      );
     })
     .catch(error => res.status(500).send(error));
   }
@@ -217,28 +222,22 @@ class DocsController {
     }
     const limit = req.query.limit || 10;
     const offset = req.query.offset || 0;
-    Document.findAll(query).then((totalDocs) => {
-      const totalDocsCount = totalDocs.length;
-      return Document.findAll({
-        offset,
-        limit,
-        where: query.where,
-        attributes: query.attributes
-      }).then((document) => {
-        if (document.length === 0) {
-          return res.status(404).send({
-            message: 'This document does not exist!'
-          });
-        }
-        const metaData = Helpers.pagination(
-          limit, offset,
-          totalDocsCount, document
-        );
-        return res.status(200).send({
-          message: `Number of documents found: ${document.length}`,
-          document,
-          metaData
+
+    return Document.findAll(query).then((document) => {
+      if (document.length === 0) {
+        return res.status(404).send({
+          message: 'This document does not exist!'
         });
+      }
+      const totalDocsCount = document.length;
+      const metaData = Helpers.pagination(
+        limit, offset,
+        totalDocsCount, document
+      );
+      return res.status(200).send({
+        message: `Number of documents found: ${totalDocsCount}`,
+        document,
+        metaData
       });
     })
     .catch(error => res.status(500).send(error));
