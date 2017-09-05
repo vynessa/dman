@@ -355,7 +355,8 @@ class Helpers {
       req.checkBody('email', 'An email is required').notEmpty();
       req.checkBody('email', 'Invalid email address!').isEmail();
       req.checkBody('password', 'Please enter a password').notEmpty();
-      req.checkBody('password', 'Password must contain at least 7 characters').isLength({ min: 7 });
+      req.checkBody('password', 'Password must contain at least 7 characters')
+        .isLength({ min: 7 });
     }
     if (errorMessage === 'loginError') {
       req.checkBody('email', 'Invalid email address!').isEmail();
