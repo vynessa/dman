@@ -87,7 +87,7 @@ class Helpers {
             res.status(200).send({
               message: 'Profile successfully updated',
               user: {
-                name: user.fullName,
+                fullName: user.fullName,
                 email: user.email,
                 id: user.id,
                 role: user.role
@@ -161,57 +161,57 @@ class Helpers {
           message: 'Sorry, the document does not exist!'
         });
       }
-      if (req.body.title === document.title) {
+      if (req.body.title.toLowerCase() === document.title.toLowerCase()) {
         return res.status(409).send({
           message: 'Sorry, this title already exists!'
         });
       }
-      if (Number(req.decoded.id) !== Number(document.userId)) {
-        return res.status(403).send({
-          message: 'Unauthorized Access ¯¯|_(ツ)_|¯¯'
-        });
-      }
-      req.body.title = req.body.title || document.dataValues.title;
-      req.body.content = req.body.content || document.dataValues.content;
-      req.body.accessType = req.body.accessType
-        || document.dataValues.accessType;
+      if (Number(req.decoded.id) === Number(document.userId)) {
+        req.body.title = req.body.title || document.title;
+        req.body.content = req.body.content || document.content;
+        req.body.accessType = req.body.accessType || document.accessType;
 
-      const errorMessage = 'updateDocumentError';
-      const errors = Helpers.formValidator(req, errorMessage);
-      if (errors) {
-        return res.status(400).send({
-          message: 'Error occured while updating Document', errors
-        });
-      }
+        const errorMessage = 'updateDocumentError';
+        const errors = Helpers.formValidator(req, errorMessage);
+        if (errors) {
+          return res.status(400).send({
+            message: 'Error occured while updating Document', errors
+          });
+        }
 
-      const verifyAccessType = Helpers.verifyAccessType(
-        req.decoded.role,
-        req.body.accessType
-      );
-      if (!verifyAccessType) {
-        return res.status(400).send({
-          message: 'Invalid Access Type'
-        });
-      }
-      return document
-        .update({
-          title: req.body.title,
-          content: req.body.content,
-          accessType: req.body.accessType
-        })
-        .then(() =>
-          res.status(200).send({
-            message: 'Document Successfully Updated',
-            document: {
-              title: document.title,
-              content: document.content,
-              owner: document.owner,
-              accessType: document.accessType,
-              updatedAt: document.updatedAt
-            }
+        const verifyAccessType = Helpers.verifyAccessType(
+          req.decoded.role,
+          req.body.accessType
+        );
+        if (!verifyAccessType) {
+          return res.status(400).send({
+            message: 'Invalid Access Type'
+          });
+        }
+
+        return document
+          .update({
+            title: req.body.title,
+            content: req.body.content,
+            accessType: req.body.accessType
           })
-        )
-        .catch(error => res.status(400).send(error));
+          .then(() =>
+            res.status(200).send({
+              message: 'Document Successfully Updated',
+              document: {
+                title: document.title,
+                content: document.content,
+                owner: document.owner,
+                accessType: document.accessType,
+                updatedAt: document.updatedAt
+              }
+            })
+          )
+          .catch(error => res.status(400).send(error));
+      }
+      return res.status(403).send({
+        message: 'Unauthorized Access ¯¯|_(ツ)_|¯¯'
+      });
     });
   }
 
@@ -236,7 +236,7 @@ class Helpers {
     const metaData = Helpers.pagination(
       limit, offset, totalDocsCount, documents);
     return res.status(200).send({
-      message: `Number of documents found: ${documents.length}`,
+      message: `Number of documents found: ${totalDocsCount}`,
       documents,
       metaData
     });
@@ -258,7 +258,7 @@ class Helpers {
   /**
    * @description This filters any string by first
       trimming, checking for special characters and
-      converts to lowercase
+      then converts to lowercase
    * @static
    * @param {string} str
    * @returns {string} str
@@ -288,7 +288,7 @@ class Helpers {
 
   /**
    * @description This enables the user set a limit to
-      the number of record to be viewed per page
+      the number of records to be viewed per page
    * @static
    * @param {int} limit
    * @param {int} offset
@@ -345,8 +345,7 @@ class Helpers {
       req.checkBody('email', 'An email is required').notEmpty();
       req.checkBody('email', 'Invalid email address!').isEmail();
       req.checkBody('password', 'Please enter a password').notEmpty();
-      req.checkBody('password', 'Password must contain at least 7 characters')
-        .len(7, 20);
+      req.checkBody('password', 'Password must contain at least 7 characters').isLength({ min: 7 });
     }
     if (errorMessage === 'loginError') {
       req.checkBody('email', 'Invalid email address!').isEmail();
@@ -356,10 +355,9 @@ class Helpers {
     if (errorMessage === 'createDocumentError'
        || errorMessage === 'updateDocumentError') {
       req.checkBody('title', 'Please enter a title').notEmpty();
-      req.checkBody('content', 'Empty content. Please enter content here!')
-        .notEmpty();
-      req.checkBody('accessType', 'Please enter an Access Type').notEmpty();
+      req.checkBody('content', 'Please enter content here!').notEmpty();
       req.checkBody('accessType', 'Access Type must be alphanumeric').isAlpha();
+      req.checkBody('accessType', 'Please enter an Access Type').notEmpty();
     }
     const errors = req.validationErrors();
     return errors;
