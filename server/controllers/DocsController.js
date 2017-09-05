@@ -18,7 +18,10 @@ class DocsController {
     const errors = Helpers.formValidator(req, errorMessage);
     if (errors) {
       return res.status(400).send({
-        message: 'Error occured while creating Document', errors
+        message: 'Error occured while creating Document',
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     Document.find({

@@ -20,7 +20,9 @@ class UsersController {
     if (errors) {
       return res.status(400).send({
         message: 'Error while registering',
-        errors
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     User.find({
@@ -54,7 +56,9 @@ class UsersController {
     if (errors) {
       return res.status(400).send({
         message: 'Error while Logging in',
-        errors
+        errors: {
+          msg: errors[0].msg
+        }
       });
     }
     User.find({
@@ -267,10 +271,6 @@ class UsersController {
   static updateUser(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
-    }
-    const user = new User();
-    if (req.body.password) {
-      req.body.password = user.generateHash(req.body.password);
     }
     if (req.body.role && req.decoded.role === 'user') {
       return res.status(403).send({

@@ -269,7 +269,7 @@ describe('Document Controller Test Suite', () => {
       .send(invalidJson)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.errors[0].msg === 'Access Type must be alphanumeric');
+          assert(res.body.errors.msg === 'Access Type must be alphanumeric');
           assert(res.status === 400);
         } else {
           assert.ifError(err);
@@ -334,7 +334,7 @@ describe('Document Controller Test Suite', () => {
       })
       .end((err, res) => {
         if (!err) {
-          assert(res.body.errors[0].msg === 'Please enter a title');
+          assert(res.body.errors.msg === 'Please enter a title');
           assert(res.status === 400);
         } else {
           assert.ifError(err);

@@ -95,7 +95,7 @@ describe('Users Controller Test suite', () => {
         })
         .end((err, res) => {
           if (!err) {
-            assert(res.body.errors[0].msg === 'An email is required');
+            assert(res.body.errors.msg === 'An email is required');
             assert(res.status === 400);
           } else {
             const error = new Error('Registration error');
@@ -117,7 +117,7 @@ describe('Users Controller Test suite', () => {
         })
         .end((err, res) => {
           if (!err) {
-            assert(res.body.errors[0].msg === 'Please enter a password');
+            assert(res.body.errors.msg === 'Please enter a password');
             assert(res.status === 400);
           } else {
             assert.ifError(err);
@@ -645,44 +645,22 @@ describe('Users Controller Test suite', () => {
 
     it('should respond with `Ok` if an admin updates a user\'s role', (done) => {
       api
-      .put('/api/v1/user/2')
+      .put('/api/v1/users/2')
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        fullName: 'Gold Ejikeme',
+        fullName: 'Gold Ejike',
         email: 'gold.ejike@gmail.com',
-        password: 'goldejike',
-        role: 'admin'
+        password: 'goldejike123',
       })
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Document Successfully Updated');
+          assert(res.body.message === 'Profile successfully updated');
           assert(res.status === 200);
         }
         done();
       });
-    });
-
-    it('should respond with `Bad request` if a user updates his/her password with less than 7 characters', (done) => {
-      api
-        .put('/api/v1/users/2')
-        .set('Authorization', `${userToken}`)
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .send({
-          fullName: 'Golden girl',
-          password: '09'
-        })
-        .end((err, res) => {
-          if (!err) {
-            assert(res.body.errors[0].msg === 'Password must contain at least 7 characters');
-            assert(res.status === 400);
-          } else {
-            assert.ifError(err);
-          }
-          done();
-        });
     });
 
     it('should respond with `Conflict` if a user updates his/her email with an existing email', (done) => {

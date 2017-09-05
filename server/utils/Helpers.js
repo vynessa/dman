@@ -50,6 +50,11 @@ class Helpers {
    * @memberof Helpers
    */
   static updateUserHelper(req, res) {
+    let hashedPassword;
+    const newUser = new User();
+    if (req.body.password) {
+      hashedPassword = newUser.generateHash(req.body.password);
+    }
     return User.findById(Math.abs(req.params.id)).then((user) => {
       if (!user) {
         return res.status(404).send({
@@ -65,7 +70,7 @@ class Helpers {
           || req.decoded.role === 'admin') {
         req.body.fullName = req.body.fullName || user.dataValues.fullName;
         req.body.email = req.body.email || user.dataValues.email;
-        req.body.password = req.body.password || user.dataValues.password;
+        req.body.password = hashedPassword || user.dataValues.password;
         req.body.role = req.body.role || user.dataValues.role;
 
         const errorMessage = 'updateUserError';
@@ -73,7 +78,9 @@ class Helpers {
         if (errors) {
           return res.status(400).send({
             message: 'Error occured while updating User',
-            errors
+            errors: {
+              msg: errors[0].msg
+            }
           });
         }
         return user
@@ -175,7 +182,10 @@ class Helpers {
         const errors = Helpers.formValidator(req, errorMessage);
         if (errors) {
           return res.status(400).send({
-            message: 'Error occured while updating Document', errors
+            message: 'Error occured while updating Document',
+            errors: {
+              msg: errors[0].msg
+            }
           });
         }
 
