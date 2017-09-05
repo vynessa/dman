@@ -240,6 +240,9 @@
                     <a href="#find-user" class="toc-h2 toc-link" data-title="Users">Find User</a>
                   </li>
                   <li>
+                    <a href="#find-user-39-s-documents" class="toc-h2 toc-link" data-title="Users">Find User's Documents</a>
+                  </li>
+                  <li>
                     <a href="#delete-user" class="toc-h2 toc-link" data-title="Users">Delete User</a>
                   </li>
                   <li>
@@ -310,7 +313,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <p>Request:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
-  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
+  <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
   <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"vanessa.ejikeme@gmail.com"</span><span class="p">,</span>
   <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"vanessa"</span>
 <span class="p">}</span>
@@ -353,7 +356,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"token"</span><span class="p">:</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mywicm9sZSI6InVzZXIiLCJpYXQiOjE1MDI5Njg4MDksImV4cCI6MTUwMzIyODAwOX0.sOCcWWnsrSmnlH0tdWTG9bnGMTQC7dUqU6DhgcUaCyM"</span><span class="p">,</span>
     <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Vanessa Ejikeme"</span><span class="p">,</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
         <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span>
     <span class="p">}</span>
@@ -381,7 +384,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Profile successfully updated"</span><span class="p">,</span>
     <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
         <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@admin.com"</span><span class="p">,</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span>
@@ -405,7 +408,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"user"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+        <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
         <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@admin.com"</span><span class="p">,</span>
         <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
         <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-17"</span>
@@ -421,6 +424,38 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
 </ul>
+<h2 id='find-user-39-s-documents'>Find User&#39;s Documents</h2>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
+    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Number of documents found: 1"</span><span class="p">,</span>
+    <span class="s2">"documents"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Politik"</span><span class="p">,</span>
+            <span class="s2">"owner"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"accessType"</span><span class="p">:</span> <span class="s2">"public"</span><span class="p">,</span>
+            <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-09-03"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"metaData"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"page"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"pageCount"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><h3 id='request-5'>Request</h3>
+<ul>
+<li>Endpoint: GET: <code>/api/v1/users/1/documents</code></li>
+<li>Requires: Authorization</li>
+</ul>
+<h3 id='response-5'>Response</h3>
+<ul>
+<li>Status: <code>200: OK</code></li>
+<li>Body <code>(application/json)</code></li>
+</ul>
 <h2 id='delete-user'>Delete User</h2>
 <blockquote>
 <p>Response:</p>
@@ -428,12 +463,12 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Yipee! User deleted successfully!"</span>
 <span class="p">}</span>
-</code></pre><h3 id='request-5'>Request</h3>
+</code></pre><h3 id='request-6'>Request</h3>
 <ul>
 <li>Endpoint: DELETE: <code>/api/v1/users/2</code></li>
 <li>Requires: Authorization</li>
 </ul>
-<h3 id='response-5'>Response</h3>
+<h3 id='response-6'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -465,12 +500,12 @@ You must replace the<code>token</code> with the one gotten after authentication.
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
-</code></pre><h3 id='request-6'>Request</h3>
+</code></pre><h3 id='request-7'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>/api/v1/users/createuser</code></li>
 <li>Requires: Authorization</li>
 </ul>
-<h3 id='response-6'>Response</h3>
+<h3 id='response-7'>Response</h3>
 <ul>
 <li>Status: <code>201: Created</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -487,7 +522,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
     <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Number of users found: 2"</span><span class="p">,</span>
     <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"info@admin.com"</span><span class="p">,</span>
             <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
@@ -508,12 +543,12 @@ You must replace the<code>token</code> with the one gotten after authentication.
         <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">2</span>
     <span class="p">}</span>
 <span class="p">}</span>
-</code></pre><h3 id='request-7'>Request</h3>
+</code></pre><h3 id='request-8'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>/api/v1/users</code></li>
 <li>Requires: Authorization</li>
 </ul>
-<h3 id='response-7'>Response</h3>
+<h3 id='response-8'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
@@ -528,10 +563,10 @@ You must replace the<code>token</code> with the one gotten after authentication.
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="p">{</span>
     <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"User found!"</span><span class="p">,</span>
-    <span class="s2">"usersCount"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"users"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Admin"</span><span class="p">,</span>
+            <span class="s2">"fullName"</span><span class="p">:</span> <span class="s2">"Administrator"</span><span class="p">,</span>
             <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">,</span>
             <span class="s2">"createdAt"</span><span class="p">:</span> <span class="s2">"2017-08-27"</span>
         <span class="p">}</span>
@@ -543,7 +578,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
         <span class="s2">"totalCount"</span><span class="p">:</span> <span class="mi">1</span>
     <span class="p">}</span>
 <span class="p">}</span>
-</code></pre><h3 id='request-8'>Request</h3>
+</code></pre><h3 id='request-9'>Request</h3>
 <ul>
 <li>Endpoint: GET: <code>api/v1/search/users/?q=admin</code></li>
 <li>Requires: Authentication</li>
@@ -562,7 +597,7 @@ You must replace the<code>token</code> with the one gotten after authentication.
 <td>Search query.</td>
 </tr>
 </tbody></table>
-<h3 id='response-8'>Response</h3>
+<h3 id='response-9'>Response</h3>
 <ul>
 <li>Status: <code>200: OK</code></li>
 <li>Body <code>(application/json)</code></li>
