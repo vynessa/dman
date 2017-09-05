@@ -2,7 +2,7 @@ import express from 'express';
 import logger from 'morgan';
 import validator from 'express-validator';
 import bodyParser from 'body-parser';
-import verifyToken from './middlewares/auth';
+import verifyToken from './middlewares/verifyToken';
 import valueChecker from './middlewares/valueChecker';
 import router from './routes/router';
 
