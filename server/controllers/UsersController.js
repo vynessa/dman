@@ -1,4 +1,5 @@
 import Helpers from '../utils/Helpers';
+import Utils from '../utils/Utils';
 import { User, Document } from '../models';
 
 /**
@@ -9,8 +10,8 @@ class UsersController {
   /**
    * @description This enables users to register on the
       application and get a generated JWT
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
@@ -21,7 +22,7 @@ class UsersController {
       return res.status(400).send({
         message: 'Error while registering',
         errors: {
-          msg: errors[0].msg
+          message: errors[0].msg
         }
       });
     }
@@ -34,9 +35,7 @@ class UsersController {
         if (!user) {
           return Helpers.createUserHelper(req, res);
         }
-        return res.status(409).send({
-          message: 'This user already exists!'
-        });
+        return Utils.emailConflictResponse(res);
       })
       .catch(error => res.status(500).send(error));
   }
@@ -45,8 +44,8 @@ class UsersController {
    * @description This allow users login into the
       application if registered
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
@@ -57,7 +56,7 @@ class UsersController {
       return res.status(400).send({
         message: 'Error while Logging in',
         errors: {
-          msg: errors[0].msg
+          message: errors[0].msg
         }
       });
     }
@@ -82,18 +81,11 @@ class UsersController {
             message: 'Incorrect email or password'
           });
         }
-        const token = user.generateToken(
-          returningUser.id,
-          returningUser.role,
-          returningUser.fullName
-        );
+        const { fullName, id, role } = returningUser;
+        const token = user.generateToken(id, role, fullName);
         return res.status(200).send({
           token,
-          user: {
-            fullName: returningUser.fullName,
-            id: returningUser.id,
-            role: returningUser.role
-          }
+          user: { fullName, id, role }
         });
       })
       .catch(error => res.status(500).send(error));
@@ -102,8 +94,8 @@ class UsersController {
   /**
    * @description This enables the admin user only to create other users
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
@@ -120,8 +112,8 @@ class UsersController {
    * @description Enables admin users only to get all
       users in the application
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
@@ -131,24 +123,19 @@ class UsersController {
         message: 'Unauthorized access! All users can only be viewed by an admin'
       });
     }
-    if (req.query.limit || req.query.offset) {
-      return Helpers.limitAndOffsetValidator(
+    const { limit, offset } = Helpers.limitAndOffsetValidator(
         req.query.limit,
         req.query.offset,
         res
-      );
-    }
+    );
+
+    if (!limit) return;
     const query = {
+      limit,
+      offset,
       attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
-    const limit = req.query.limit || 10;
-    const offset = req.query.offset || 0;
-
-    return User.findAll({
-      offset,
-      limit,
-      attributes: query.attributes
-    }).then((users) => {
+    User.findAll(query).then((users) => {
       if (users.length === 0) {
         return res.status(404).send({
           message: 'No user found!'
@@ -170,26 +157,24 @@ class UsersController {
   /**
    * @description Enables only an admin get a user by id
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
   static findUser(req, res) {
-    if (!Number.isInteger(Number(req.params.id))) {
-      return Helpers.idValidator(res);
-    }
     if (req.decoded.role !== 'admin') {
       return res.status(403).send({
         message: 'Unauthorized access! Only an admin can get a user'
       });
     }
+    if (!Number.isInteger(Number(req.params.id))) {
+      return Helpers.idValidator(res);
+    }
     return User.findById(Math.abs(req.params.id))
       .then((user) => {
         if (!user) {
-          return res.status(404).send({
-            message: 'User not found!'
-          });
+          return Utils.noUserResponse(res);
         }
         return res.status(200).send({
           user: {
@@ -208,33 +193,32 @@ class UsersController {
    * @description Users can get all documents belonging to them by id
       while an admin can get any user's documents by id
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof DocsController
    */
   static findUserDocuments(req, res) {
     const id = req.params.id;
+    if (!Number.isInteger(Number(id))) {
+      return Helpers.idValidator(res);
+    }
+    const { limit, offset } = Helpers.limitAndOffsetValidator(
+      req.query.limit,
+      req.query.offset,
+      res
+    );
+    if (!limit) return;
     const query = {
+      limit,
+      offset,
       where: {
         userId: id,
       },
       attributes: ['id', 'title', 'owner', 'accessType', 'createdAt']
     };
-    if (req.query.limit || req.query.offset) {
-      return Helpers.limitAndOffsetValidator(
-        req.query.limit,
-        req.query.offset,
-        res
-      );
-    }
-    if (!Number.isInteger(Number(id))) {
-      return Helpers.idValidator(res);
-    }
     if (req.decoded.role === 'admin'
       || Number(req.decoded.id) === Number(id)) {
-      const limit = req.query.limit || 10;
-      const offset = req.query.offset || 0;
       return Document.findAll(query)
       .then((documents) => {
         if (documents.length === 0) {
@@ -263,8 +247,8 @@ class UsersController {
    * @description Enables users update their profile except their role
       while the admin can update any user's profile
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
@@ -277,17 +261,15 @@ class UsersController {
         message: 'Unauthorized access! Only an admin can update roles'
       });
     }
-    return Helpers.updateUserHelper(req, res).catch(error =>
-      res.status(500).send(error)
-    );
+    return Helpers.updateUserHelper(req, res);
   }
 
   /**
    * @description Enables a user delete his profile
       while an admin can delete all
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} response
    * @memberof UsersController
    */
@@ -311,9 +293,7 @@ class UsersController {
               )
               .catch(error => res.status(400).send(error));
           }
-          return res.status(404).send({
-            message: 'User not found! :('
-          });
+          return Utils.noUserResponse(res);
         })
         .catch(error => res.status(500).send(error));
     }
@@ -325,45 +305,30 @@ class UsersController {
   /**
    * @description Enables the admin search for a particular user
    * @static
-   * @param {object} req
-   * @param {object} res
+   * @param {object} req HTTP request object
+   * @param {object} res HTTP response object
    * @returns {object} User
    * @memberof UsersController
    */
   static searchUsers(req, res) {
-    const query = Helpers.userSearchQuery(req);
-    if (req.query.limit || req.query.offset) {
-      return Helpers.limitAndOffsetValidator(
-        req.query.limit,
-        req.query.offset,
-        res
-      );
-    }
     if (!req.query.q) {
       return res.status(400).send({
         message: 'Please enter a keyword'
       });
     }
+    const query = Helpers.userSearchQuery(req, res);
+    if (!query) return false;
     if (req.decoded.role === 'admin') {
-      const limit = req.query.limit || 10;
-      const offset = req.query.offset || 0;
-      return User.findAll({
-        offset,
-        limit,
-        where: query.where,
-        attributes: query.attributes
-      }).then((users) => {
+      return User.findAll(query).then((users) => {
         const totalUsersCount = users.length;
         const metaData = Helpers.pagination(
-          limit,
-          offset,
+          query.limit,
+          query.offset,
           totalUsersCount,
           users
         );
         if (users.length === 0) {
-          return res.status(404).send({
-            message: 'User not found!'
-          });
+          return Utils.noUserResponse(res);
         }
         return res.status(200).json({
           message: `Number of users found: ${totalUsersCount}`,
