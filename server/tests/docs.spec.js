@@ -226,6 +226,7 @@ describe('Document Controller Test Suite', () => {
       .expect(201)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
           assert(res.body.message === 'Document created successfully');
           assert(res.status === 201);
         }
@@ -248,6 +249,7 @@ describe('Document Controller Test Suite', () => {
       })
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
           assert(res.body.message === 'Document created successfully');
           assert(res.status === 201);
         } else {
@@ -270,6 +272,7 @@ describe('Document Controller Test Suite', () => {
       })
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
           assert(res.body.message === 'Invalid Access Type');
           assert(res.status === 400);
         } else {
@@ -288,6 +291,7 @@ describe('Document Controller Test Suite', () => {
       .send(invalidJson)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
           assert(res.body.errors.message === 'Access Type must be alphanumeric');
           assert(res.status === 400);
         } else {
