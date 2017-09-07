@@ -127,6 +127,7 @@ describe('Document Controller Test Suite', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
             assert(res.body.message === 'No document found!');
             assert(res.status === 404);
           }
