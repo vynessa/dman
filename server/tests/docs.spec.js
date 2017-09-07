@@ -191,8 +191,26 @@ describe('Document Controller Test Suite', () => {
             title = res.body.title;
             content = res.body.content;
             accessType = res.body.accessType;
-            owner = res.body.owner;
-            userId = res.body.userId;
+          }
+          done();
+        });
+
+      api
+        .post('/api/v1/documents')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .send({
+          title: 'Tori Kelly',
+          content: 'Heard of her? No? Why?',
+          accessType: 'private',
+        })
+        .expect(201)
+        .end((err, res) => {
+          if (!err) {
+            title = res.body.title;
+            content = res.body.content;
+            accessType = res.body.accessType;
           }
           done();
         });
@@ -269,7 +287,7 @@ describe('Document Controller Test Suite', () => {
       .send(invalidJson)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.errors.msg === 'Access Type must be alphanumeric');
+          assert(res.body.errors.message === 'Access Type must be alphanumeric');
           assert(res.status === 400);
         } else {
           assert.ifError(err);
@@ -334,7 +352,7 @@ describe('Document Controller Test Suite', () => {
       })
       .end((err, res) => {
         if (!err) {
-          assert(res.body.errors.msg === 'Please enter a title');
+          assert(res.body.errors.message === 'Please enter a title');
           assert(res.status === 400);
         } else {
           assert.ifError(err);
@@ -344,8 +362,8 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
-  describe('GET `/api/v1/documents/?limit={}`', () => {
-    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+  describe('GET `/api/v1/documents/?limit={}&offset={}`', () => {
+    it('should repond with `Bad request` if the limit is a non-integer', (done) => {
       api
         .get('/api/v1/documents/?limit=jfhjb')
         .set('Authorization', `${token}`)
@@ -353,7 +371,24 @@ describe('Document Controller Test Suite', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Please set the limit and offset as an integer');
+            assert(res.body.message === 'Please set the limit as an integer');
+            assert(res.status === 400);
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+
+    it('should repond with `Bad request` if the offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/documents/?offset=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
             assert.ifError(err);
@@ -419,7 +454,7 @@ describe('Document Controller Test Suite', () => {
 
     it('should respond with `OK` if a user queries his/her documents', (done) => {
       api
-      .get('/api/v1/documents/3')
+      .get('/api/v1/documents/4')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -434,9 +469,26 @@ describe('Document Controller Test Suite', () => {
       });
     });
 
-    it('should respond with `Unauthorized` if a user queries another user\'s document', (done) => {
+    it('should respond with `Ok` if a user queries another user\'s document with access type of `public` or `user`', (done) => {
       api
       .get('/api/v1/documents/1')
+      .set('Authorization', `${userToken}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .end((err, res) => {
+        if (!err) {
+          assert(res.body.message === 'Document found!');
+          assert(res.status === 200);
+        } else {
+          assert.ifError(err);
+        }
+        done();
+      });
+    });
+
+    it('should respond with `Unauthorized` if a user queries another user\'s document with access type of `private` or `admin`', (done) => {
+      api
+      .get('/api/v1/documents/3')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -476,7 +528,7 @@ describe('Document Controller Test Suite', () => {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'This document does not exist!');
+          assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
           assert.ifError(err);
@@ -486,8 +538,8 @@ describe('Document Controller Test Suite', () => {
     });
   });
 
-  describe('GET `/api/v1/search/documents/?q={}&limit={}`', () => {
-    it('should repond with `Bad request` if the limit or offset is a non-integer', (done) => {
+  describe('GET `/api/v1/search/documents/?q={}&limit={}&offset{}`', () => {
+    it('should repond with `Bad request` if the limit is a non-integer', (done) => {
       api
         .get('/api/v1/search/documents/?q=Politik&limit=jfhjb')
         .set('Authorization', `${token}`)
@@ -495,7 +547,24 @@ describe('Document Controller Test Suite', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.message === 'Please set the limit and offset as an integer');
+            assert(res.body.message === 'Please set the limit as an integer');
+            assert(res.status === 400);
+          } else {
+            assert.ifError(err);
+          }
+          done();
+        });
+    });
+
+    it('should repond with `Bad request` if the offset is a non-integer', (done) => {
+      api
+        .get('/api/v1/search/documents/?q=Politik&offset=jfhjb')
+        .set('Authorization', `${token}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (!err) {
+            assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
             assert.ifError(err);
@@ -531,7 +600,7 @@ describe('Document Controller Test Suite', () => {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'This document does not exist!');
+          assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
           assert.ifError(err);
@@ -566,7 +635,7 @@ describe('Document Controller Test Suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        title: 'The other roomsssss',
+        title: 'The other roosssss',
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private',
       })
@@ -632,13 +701,13 @@ describe('Document Controller Test Suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        title: 'The other roomsssss',
+        title: 'Politik',
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private'
       })
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Sorry, this title already exists!');
+          assert(res.body.message === 'Oops! A document with this title already exists!');
           assert(res.status === 409);
         } else {
           assert.ifError(err);
@@ -654,8 +723,8 @@ describe('Document Controller Test Suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        title: 'The other roomsssss',
-        content: 'We all belong somewhere. Some belong in the other room',
+        title: 'The other one',
+        content: 'We all belong somewhere',
         accessType: 'private'
       })
       .end((err, res) => {
@@ -704,7 +773,7 @@ describe('Document Controller Test Suite', () => {
       })
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Sorry, the document does not exist!');
+          assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
           assert.ifError(err);
@@ -757,7 +826,7 @@ describe('Document Controller Test Suite', () => {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Unauthorized access! Only an admin can delete a document.');
+          assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
           assert.ifError(err);
@@ -774,7 +843,7 @@ describe('Document Controller Test Suite', () => {
       .expect('Content-Type', /json/)
       .end((err, res) => {
         if (!err) {
-          assert(res.body.message === 'Document not found! :(');
+          assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
           assert.ifError(err);
