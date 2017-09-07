@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - "6.10.3"
-group: deprecated-2017Q3
+install: npm install
 script: npm test
 after_success:
   - npm install -g codeclimate-test-reporter
