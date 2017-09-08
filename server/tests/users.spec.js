@@ -4,7 +4,6 @@ import app from '../../build/server';
 
 const api = request(app);
 
-console.log(process.env.NODE_ENV)
 let token, userToken, role, fullName, email, password;
 
 describe('Users Controller Test suite', () => {
