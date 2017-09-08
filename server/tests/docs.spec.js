@@ -707,7 +707,7 @@ describe('Document Controller Test Suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send({
-        title: 'The other roosssss',
+        title: 'The others',
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private',
       })
@@ -760,7 +760,7 @@ describe('Document Controller Test Suite', () => {
       .send({
         title: 'The other rooms!',
         content: 'We all belong somewhere. Some belong in the other room',
-        accessType: 'user',
+        accessType: 'nsabc',
       })
       .expect(400)
       .end((err, res) => {
