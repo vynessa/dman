@@ -324,7 +324,6 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
-          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Oops! A document with this title already exists!');
           assert(res.status === 409);
         } else {
