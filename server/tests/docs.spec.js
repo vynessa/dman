@@ -92,8 +92,8 @@ describe('Document Controller Test Suite', () => {
       token = jwt.sign(
         {
           id: 1,
-          role: process.env.ADMINROLE,
-          fullName: process.env.FULL_NAME
+          role: 'admin',
+          fullName: 'Admin'
         },
         process.env.JWT_SECRET,
         { expiresIn: '72h' }
