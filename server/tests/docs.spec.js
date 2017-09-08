@@ -125,6 +125,7 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(404)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -227,6 +228,7 @@ describe('Document Controller Test Suite', () => {
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Document created successfully');
           assert(res.status === 201);
         }
@@ -247,9 +249,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room. Some decide to covfefe',
         accessType: 'user',
       })
+      .expect(201)
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Document created successfully');
           assert(res.status === 201);
         } else {
@@ -270,9 +274,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room. Some decide to covfefe',
         accessType: 'admin',
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid Access Type');
           assert(res.status === 400);
         } else {
@@ -289,9 +295,11 @@ describe('Document Controller Test Suite', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .send(invalidJson)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
+          assert(typeof res.body.errors.message === 'string');
           assert(res.body.errors.message === 'Access Type must be alphanumeric');
           assert(res.status === 400);
         } else {
@@ -312,8 +320,11 @@ describe('Document Controller Test Suite', () => {
         content: 'New dawn. New day.',
         accessType: 'public',
       })
+      .expect(409)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Oops! A document with this title already exists!');
           assert(res.status === 409);
         } else {
@@ -334,8 +345,11 @@ describe('Document Controller Test Suite', () => {
         content: 'New dawn. New day.',
         accessType: 'user',
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid Access Type');
           assert(res.status === 400);
         } else {
@@ -355,8 +369,11 @@ describe('Document Controller Test Suite', () => {
         content: 'New dawn. New day.',
         accessType: 'user',
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.errors.message === 'string');
           assert(res.body.errors.message === 'Please enter a title');
           assert(res.status === 400);
         } else {
@@ -374,8 +391,11 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the limit as an integer');
             assert(res.status === 400);
           } else {
@@ -391,8 +411,11 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
@@ -410,9 +433,13 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.documents.length >= 1);
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
+            assert(typeof res.body.documents === 'object');
+            assert(res.body.documents.length === 4);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -427,9 +454,13 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${userToken}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(200)
         .end((err, res) => {
           if (!err) {
-            assert(res.body.documents.length >= 1);
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
+            assert(typeof res.body.documents === 'object');
+            assert(res.body.documents.length === 3);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -446,8 +477,12 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
           assert(res.status === 200);
         } else {
@@ -463,8 +498,12 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
           assert(res.status === 200);
         } else {
@@ -480,8 +519,12 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
           assert(res.status === 200);
         } else {
@@ -497,8 +540,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
@@ -514,8 +560,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -531,8 +580,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
@@ -550,8 +602,11 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the limit as an integer');
             assert(res.status === 400);
           } else {
@@ -567,8 +622,11 @@ describe('Document Controller Test Suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
@@ -586,8 +644,12 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(res.body.document.length === 1);
           assert(res.body.document[0].title === 'Politik');
           assert(res.status === 200);
         } else {
@@ -603,8 +665,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
@@ -620,8 +685,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Please enter a keyword');
           assert(res.status === 400);
         } else {
@@ -644,8 +712,12 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private',
       })
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document Successfully Updated');
           assert(res.status === 200);
         } else {
@@ -666,8 +738,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private',
       })
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized Access ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
@@ -688,8 +763,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'user',
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid Access Type');
           assert(res.status === 400);
         } else {
@@ -710,8 +788,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private'
       })
+      .expect(409)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Oops! A document with this title already exists!');
           assert(res.status === 409);
         } else {
@@ -732,8 +813,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere',
         accessType: 'private'
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -754,8 +838,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'yes'
       })
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid Access Type');
           assert(res.status === 400);
         } else {
@@ -776,8 +863,11 @@ describe('Document Controller Test Suite', () => {
         content: 'We all belong somewhere. Some belong in the other room',
         accessType: 'private'
       })
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {
@@ -795,8 +885,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Document deleted successfully!');
           assert(res.status === 200);
         } else {
@@ -812,8 +905,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -829,8 +925,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
@@ -846,8 +945,11 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, this document does not exist!');
           assert(res.status === 404);
         } else {

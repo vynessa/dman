@@ -50,6 +50,7 @@ describe('Users Controller Test suite', () => {
         .get('/api/v1/')
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(200)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -74,6 +75,7 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'vanessa'
         })
+        .expect(409)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -95,6 +97,7 @@ describe('Users Controller Test suite', () => {
           fullName: 'Vanessa Willams',
           password: 'vanessa'
         })
+        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -118,6 +121,7 @@ describe('Users Controller Test suite', () => {
         .send({
           email: 'info@admin.com'
         })
+        .expect(400)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -140,6 +144,7 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'adminhere'
         })
+        .expect(200)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -163,6 +168,7 @@ describe('Users Controller Test suite', () => {
           email: 'info@admin.com',
           password: 'hnbnhg'
         })
+        .expect(401)
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
@@ -185,8 +191,11 @@ describe('Users Controller Test suite', () => {
           email: 'vanessa.wiliams@gmail.com',
           password: 'vanessa'
         })
+        .expect(401)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Incorrect email or password');
             assert(res.status === 401);
           } else {
@@ -211,8 +220,12 @@ describe('Users Controller Test suite', () => {
           email: 'femi@gmail.com',
           password: 'femimedale'
         })
+        .expect(201)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.user.email === 'string');
+            assert(Object.keys(res.body.user).length === 5);
             assert(res.body.user.email === 'femi@gmail.com');
             assert(res.status === 201);
           } else {
@@ -233,8 +246,11 @@ describe('Users Controller Test suite', () => {
           email: 'joy@gmail.com',
           password: 'joysmith'
         })
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Invalid token. Please login :)');
             assert(res.status === 400);
           } else {
@@ -254,8 +270,11 @@ describe('Users Controller Test suite', () => {
           email: 'maggie@gmail.com',
           password: 'MaggieG'
         })
+        .expect(401)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set token in the header!');
             assert(res.status === 401);
           } else {
@@ -276,8 +295,12 @@ describe('Users Controller Test suite', () => {
           email: 'femi@gmail.com',
           password: 'famiily'
         })
+        .expect(403)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
+            assert(res.body.message.length === 51);
             assert(
               res.body.message ===
                 'Unathorized access! Only an admin can create a user'
@@ -301,6 +324,8 @@ describe('Users Controller Test suite', () => {
         .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the limit as an integer');
             assert(res.status === 400);
           } else {
@@ -319,6 +344,8 @@ describe('Users Controller Test suite', () => {
         .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
@@ -336,8 +363,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(200)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.users === 'object');
             assert(res.body.users.length === 3);
             assert(res.status === 200);
           } else {
@@ -353,8 +383,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${userToken}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(403)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Unauthorized access! All users can only be viewed by an admin');
             assert(res.status === 403);
           } else {
@@ -372,8 +405,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! Only an admin can get a user');
           assert(res.status === 403);
         } else {
@@ -389,8 +425,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.user === 'object');
           assert(res.body.user.id === 1);
           assert(res.status === 200);
         } else {
@@ -406,8 +445,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.user === 'object');
           assert(res.body.user.id === 1);
           assert(res.status === 200);
         } else {
@@ -423,8 +465,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, the user does not exist!');
           assert(res.status === 404);
         } else {
@@ -440,8 +485,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -459,8 +507,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the limit as an integer');
             assert(res.status === 400);
           } else {
@@ -476,8 +527,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
@@ -495,8 +549,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -512,9 +569,14 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(res.body.documents.length === 2);
           assert(res.body.documents[0].title === 'Politik');
+          assert(res.body.documents[1].accessType === 'private');
           assert(res.status === 200);
         } else {
           assert.ifError(err);
@@ -529,8 +591,12 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(res.body.documents.length === 1);
           assert(res.body.documents[0].title === 'Trump has been covfefed');
           assert(res.status === 200);
         } else {
@@ -546,8 +612,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'No document found!');
           assert(res.status === 404);
         } else {
@@ -563,8 +632,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
@@ -582,8 +654,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the limit as an integer');
             assert(res.status === 400);
           } else {
@@ -599,8 +674,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${token}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Please set the offset as an integer');
             assert(res.status === 400);
           } else {
@@ -618,8 +696,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Please enter a keyword');
           assert(res.status === 400);
         } else {
@@ -635,8 +716,12 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(res.body.users.length === 1);
           assert(res.body.users[0].fullName === 'Admin');
           assert(res.status === 200);
         } else {
@@ -652,8 +737,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! ¯¯|_(ツ)_|¯¯');
           assert(res.status === 403);
         } else {
@@ -669,8 +757,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, the user does not exist!');
           assert(res.status === 404);
         } else {
@@ -692,8 +783,11 @@ describe('Users Controller Test suite', () => {
           fullName: 'Administrator',
           password: 'adminuser'
         })
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Invalid ID. Please enter a valid ID');
             assert(res.status === 400);
           } else {
@@ -712,8 +806,11 @@ describe('Users Controller Test suite', () => {
         .send({
           fullName: 'Gold Williams'
         })
+        .expect(403)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Unauthorized access ¯¯|_(ツ)_|¯¯');
             assert(res.status === 403);
           } else {
@@ -732,8 +829,11 @@ describe('Users Controller Test suite', () => {
       .send({
         role: 'admin'
       })
+      .expect(403)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Unauthorized access! Only an admin can update roles');
           assert(res.status === 403);
         }
@@ -753,8 +853,12 @@ describe('Users Controller Test suite', () => {
         password: 'goldejike123',
         role: 'admin'
       })
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
+          assert(typeof res.body.user === 'object');
           assert(res.body.message === 'Profile successfully updated');
           assert(res.status === 200);
         }
@@ -771,8 +875,11 @@ describe('Users Controller Test suite', () => {
         .send({
           password: 'g'
         })
+        .expect(400)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Password must contain at least 7 characters');
             assert(res.status === 400);
           } else {
@@ -791,8 +898,11 @@ describe('Users Controller Test suite', () => {
         .send({
           email: 'info@admin.com',
         })
+        .expect(409)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'This email already exists!');
             assert(res.status === 409);
           } else {
@@ -812,8 +922,11 @@ describe('Users Controller Test suite', () => {
           fullName: 'Administrator',
           password: 'adminuser'
         })
+        .expect(404)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Sorry, the user does not exist!');
             assert(res.status === 404);
           } else {
@@ -831,8 +944,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(400)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Invalid ID. Please enter a valid ID');
           assert(res.status === 400);
         } else {
@@ -848,8 +964,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(200)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Yipee! User deleted successfully!');
           assert(res.status === 200);
         } else {
@@ -865,8 +984,11 @@ describe('Users Controller Test suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .expect(404)
       .end((err, res) => {
         if (!err) {
+          assert(typeof res.body === 'object');
+          assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Sorry, the user does not exist!');
           assert(res.status === 404);
         } else {
@@ -882,8 +1004,11 @@ describe('Users Controller Test suite', () => {
         .set('Authorization', `${userToken}`)
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
+        .expect(403)
         .end((err, res) => {
           if (!err) {
+            assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Unathuorized Access! ¯¯|_(ツ)_|¯¯');
             assert(res.status === 403);
           } else {
