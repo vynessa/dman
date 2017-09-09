@@ -16,6 +16,7 @@ ratings:
 exclude_paths:
 - "build"
 - "public"
+- "server/models/"
 - .gitignore
 - "/server/tests/"
 - "node_modules/"
