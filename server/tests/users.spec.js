@@ -220,7 +220,7 @@ describe('Users Controller Test suite', () => {
     });
   });
 
-  describe('', () => {
+  describe('Login user before every protected route is accessed', () => {
     beforeEach((done) => {
       api
         .post('/api/v1/users/auth/login')
@@ -400,7 +400,7 @@ describe('Users Controller Test suite', () => {
             if (!err) {
               assert(typeof res.body === 'object');
               assert(typeof res.body.users === 'object');
-              // assert(res.body.users.length >= 3);
+              assert(res.body.users.length === 4);
               assert(res.status === 200);
             } else {
               assert.ifError(err);
