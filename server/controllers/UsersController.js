@@ -151,11 +151,6 @@ class UsersController {
       attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
     User.findAll(query).then((users) => {
-      if (users.length === 0) {
-        return res.status(404).send({
-          message: 'No user found!'
-        });
-      }
       const totalUsersCount = users.length;
       const metaData = Helpers.pagination(
         limit, offset, totalUsersCount, users
