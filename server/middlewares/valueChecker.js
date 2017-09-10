@@ -1,10 +1,12 @@
 /**
  * @description valueChecker: Checks for any JSON error
-   and returns a message
- * @param {object} error
- * @param {object} req
- * @param {object} res
- * @param {object} next
+ * and returns a message
+ *
+ * @param {object} error Error object
+ * @param {object} req HTTP request object
+ * @param {object} res HTTP response object
+ * @param {object} next next function
+ *
  * @returns {object} response
  */
 const valueChecker = ((error, req, res, next) => {

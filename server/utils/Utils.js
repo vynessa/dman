@@ -5,9 +5,13 @@ import Helpers from '../utils/Helpers';
 class Utils {
   /**
    * @description Response object to handle title conflicts
+   *
    * @static
+   *
    * @param {object} res HTTP response object
+   *
    * @returns {object} Response
+   *
    * @memberof Utils
    */
   static docConflictMessage(res) {
@@ -18,9 +22,13 @@ class Utils {
 
   /**
    * @description Response object to handle conflicts
+   *
    * @static
+   *
    * @param {object} res HTTP response object
+   *
    * @returns {object} Response
+   *
    * @memberof Utils
    */
   static emailConflictResponse(res) {
@@ -31,9 +39,13 @@ class Utils {
 
   /**
    * @description Non-existing document response
+   *
    * @static
+   *
    * @param {object} res HTTP response object
+   *
    * @returns {object} Response
+   *
    * @memberof Utils
    */
   static emptyDocResponse(res) {
@@ -44,9 +56,13 @@ class Utils {
 
   /**
    * @description Non-existing user response
+   *
    * @static
+   *
    * @param {object} res HTTP response object
+   *
    * @returns {object} Response
+   *
    * @memberof Utils
    */
   static noUserResponse(res) {
@@ -60,10 +76,14 @@ class Utils {
    * role and document accesstype. For users with role 'user', only that
    * user's document(s), and documents with access type 'user' or 'public'
    * are returned. Admin users have access to all documents
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} query
+   *
    * @memberof Utils
    */
   static accessTypeQuery(req, res) {
@@ -100,9 +120,13 @@ class Utils {
 
   /**
    * @description Queries the database based on the user's access level
+   *
    * @static
+   *
    * @param {object} req HTTP request object
+   *
    * @returns {object} query
+   *
    * @memberof Utils
    */
   static findDocumentQuery(req) {

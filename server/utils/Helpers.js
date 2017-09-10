@@ -7,11 +7,15 @@ import { User, Document } from '../models';
 class Helpers {
   /**
    * @description helper method which creates a user and returns
-      a token and a user object
+   * a token and a user object
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof Helpers
    */
   static createUserHelper(req, res) {
@@ -35,14 +39,19 @@ class Helpers {
 
   /**
    * @description Helper method which updates a user's profile
-      and returns in a new object containing the new profile
+   * and returns in a new object containing the new profile
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof Helpers
    */
   static updateUserHelper(req, res) {
+    let hashedPassword;
     const newUser = new User();
     if (req.body.password) {
       if (req.body.password.length < 7) {
@@ -50,7 +59,7 @@ class Helpers {
           message: 'Password must contain at least 7 characters'
         });
       }
-      req.body.password = newUser.generateHash(req.body.password);
+      hashedPassword = newUser.generateHash(req.body.password);
     }
 
     return User.findById(Math.abs(req.params.id)).then((user) => {
@@ -64,7 +73,7 @@ class Helpers {
           || req.decoded.role === 'admin') {
         req.body.fullName = req.body.fullName || user.dataValues.fullName;
         req.body.email = req.body.email || user.dataValues.email;
-        req.body.password = req.body.password || user.dataValues.password;
+        req.body.password = hashedPassword || user.dataValues.password;
         req.body.role = req.body.role || user.dataValues.role;
 
         const errorMessage = 'updateUserError';
@@ -77,7 +86,6 @@ class Helpers {
             }
           });
         }
-
         return user
           .update({
             fullName: req.body.fullName,
@@ -103,11 +111,15 @@ class Helpers {
 
   /**
    * @description Helper method which enables a user create
-      a document and returns the new document object
+   * a document and returns the new document object
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof Helpers
    */
   static createDocumentHelper(req, res) {
@@ -134,13 +146,7 @@ class Helpers {
         res.status(201).send({
           message: 'Document created successfully',
           document: {
-            title,
-            content,
-            owner,
-            documentId,
-            accessType,
-            userId,
-            createdAt
+            title, content, owner, documentId, accessType, userId, createdAt
           }
         });
       })
@@ -149,11 +155,15 @@ class Helpers {
 
   /**
    * @description Update a user's document on request by id
-      and returns an object with the updated document
+   *  and returns an object with the updated document
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof Helpers
    */
   static updateDocumentHelper(req, res) {
@@ -172,6 +182,7 @@ class Helpers {
               req.body.title = req.body.title || document.title;
               req.body.content = req.body.content || document.content;
               req.body.accessType = req.body.accessType || document.accessType;
+
               const verifyAccessType = Helpers.verifyAccessType(
                 req.decoded.role,
                 req.body.accessType
@@ -191,7 +202,6 @@ class Helpers {
                   }
                 });
               }
-
               return document
                 .update({
                   title: req.body.title,
@@ -220,14 +230,18 @@ class Helpers {
 
   /**
    * @description This checks the length of the documents
-      array and responds with the appropriate message
+   *  array and responds with the appropriate message
+   *
    * @static
+   *
    * @param {object} res HTTP response object
    * @param {object} documents List of douments
    * @param {number} limit limit
    * @param {number} offset offset
    * @param {number} totalDocsCount length of documents
+   *
    * @returns {object} documents
+   *
    * @memberof Helpers
    */
   static getDocsHelper(res, documents, limit, offset, totalDocsCount) {
@@ -251,9 +265,12 @@ class Helpers {
 
   /**
    * @description Validates any route which requires and id
-      for the correct id type (integer)
+   *  for the correct id type (integer)
+   *
    * @param {object} response HTTP response object
+   *
    * @returns {object} response
+   *
    * @memberof Helpers
    */
   static idValidator(response) {
@@ -264,11 +281,15 @@ class Helpers {
 
   /**
    * @description This filters any string by first
-      trimming, checking for special characters and
-      then converts to lowercase
+   *  trimming, checking for special characters and
+   *  then converts to lowercase
+   *
    * @static
+   *
    * @param {string} str Any string
+   *
    * @returns {string} str
+   *
    * @memberof Helpers
    */
   static stringFilter(str) {
@@ -277,17 +298,21 @@ class Helpers {
 
   /**
    * @description This verifies the access type passed in
-      by a user when creating a document
+   *  by a user when creating a document
+   *
    * @static
+   *
    * @param {string} role User's role
    * @param {string} accessType A document's access type
+   *
    * @returns {boolean} true or false
+   *
    * @memberof Helpers
    */
   static verifyAccessType(role, accessType) {
-    if (
-      accessType === role || accessType === 'public' || accessType === 'private'
-    ) {
+    if (accessType === role
+      || accessType === 'public'
+      || accessType === 'private') {
       return true;
     }
     return false;
@@ -295,13 +320,17 @@ class Helpers {
 
   /**
    * @description This enables the user set a limit to
-      the number of records to be viewed per page
+   *  the number of records to be viewed per page
+   *
    * @static
+   *
    * @param {int} limit limit
    * @param {int} offset offset
    * @param {int} totalCount total page count
    * @param {object} item
+   *
    * @returns {object} metaData
+   *
    * @memberof Helpers
    */
   static pagination(limit, offset, totalCount, item) {
@@ -319,12 +348,16 @@ class Helpers {
 
   /**
    * @description Verifies if the limit and offset
-      is of type int
+   * is of type int
+   *
    * @static
+   *
    * @param {int} limit limit
    * @param {int} offset offset
    * @param {object} response HTTP response object
+   *
    * @returns {object} response
+   *
    * @memberof Helpers
    */
   static limitAndOffsetValidator(limit = 10, offset = 0, response) {
@@ -345,11 +378,15 @@ class Helpers {
 
   /**
    * @description Verifies that every field in the body
-      of a form has the accurate data type and has content
+   *  of a form has the accurate data type and has content
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {string} errorMessage Error message string
+   *
    * @returns {object} errors
+   *
    * @memberof Helpers
    */
   static formValidator(req, errorMessage) {
@@ -387,10 +424,14 @@ class Helpers {
 
   /**
    * @description Search query for the users controller
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} query
+   *
    * @memberof Helpers
    */
   static userSearchQuery(req, res) {
@@ -425,11 +466,15 @@ class Helpers {
 
   /**
    * @description Search query for the documents controller
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
    * @param {string} role A user's role
+   *
    * @returns {object} query
+   *
    * @memberof Helpers
    */
   static documentSearchQuery(req, res, role) {

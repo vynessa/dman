@@ -9,8 +9,19 @@ import { User, Document, Role } from '../models';
 dotenv.config();
 const api = request(app);
 
-let token, userToken, fullName, email, password;
-let title, accessType, content, owner, userId;
+/** User's details */
+let token;
+let userToken;
+let fullName;
+let email;
+let password;
+
+/** Document details */
+let title;
+let accessType;
+let content;
+let owner;
+let userId;
 
 describe('Set the database up for testing', () => {
   beforeEach((done, req, res) => {
@@ -74,7 +85,7 @@ describe('Document Controller Test Suite', () => {
       if (set) {
         assert.isDefined(set, 'test is ready');
       } else {
-        const error = new Error('test is not ready');
+        const error = new Error('The test is not ready');
         assert.ifError(error);
       }
     });
@@ -224,13 +235,25 @@ describe('Document Controller Test Suite', () => {
       .set('Authorization', `${token}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
+      .send({
+        title: 'Testing',
+        content: 'Why should you write tests?',
+        accessType: 'admin',
+      })
       .expect(201)
       .end((err, res) => {
         if (!err) {
           assert(typeof res.body === 'object');
           assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Document created successfully');
+          assert(res.body.document.title === 'Testing');
+          assert(res.body.document.content === 'Why should you write tests?');
+          assert(res.body.document.owner === 'Admin');
+          assert(res.body.document.accessType === 'admin');
+          assert(res.body.document.userId === 1);
           assert(res.status === 201);
+        } else {
+          assert.ifError(err);
         }
         done();
       });
@@ -255,6 +278,11 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body === 'object');
           assert(typeof res.body.message === 'string');
           assert(res.body.message === 'Document created successfully');
+          assert(res.body.document.title === 'Trump has been covfefed');
+          assert(res.body.document.content === 'We all belong somewhere. Some belong in the other room. Some decide to covfefe');
+          assert(res.body.document.owner === 'Gold Ejikeme');
+          assert(res.body.document.accessType === 'user');
+          assert(res.body.document.userId === 2);
           assert(res.status === 201);
         } else {
           assert.ifError(err);
@@ -426,7 +454,7 @@ describe('Document Controller Test Suite', () => {
   });
 
   describe('GET `/api/v1/documents/`', () => {
-    it('should respond with `OK` if the admin queries all documents and one or more exist', (done) => {
+    it('should respond with `OK` if an admin queries all documents and one or more exist', (done) => {
       api
         .get('/api/v1/documents')
         .set('Authorization', `${token}`)
@@ -438,7 +466,12 @@ describe('Document Controller Test Suite', () => {
             assert(typeof res.body === 'object');
             assert(typeof res.body.message === 'string');
             assert(typeof res.body.documents === 'object');
-            assert(res.body.documents.length === 4);
+            assert(res.body.message === 'Number of documents found: 5');
+            assert(res.body.documents.length === 5);
+            assert(res.body.documents[0].title === 'Politik');
+            assert(res.body.documents[0].content === 'Waterside and plastic lights. All going down memory lane');
+            assert(res.body.documents[0].owner === 'Admin');
+            assert(res.body.documents[0].accessType === 'public');
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -447,7 +480,7 @@ describe('Document Controller Test Suite', () => {
         });
     });
 
-    it('should respond with `OK` if the user queries his/her documents and one or more exist', (done) => {
+    it('should respond with `OK` if a user queries all documents and one or more exist', (done) => {
       api
         .get('/api/v1/documents')
         .set('Authorization', `${userToken}`)
@@ -459,7 +492,14 @@ describe('Document Controller Test Suite', () => {
             assert(typeof res.body === 'object');
             assert(typeof res.body.message === 'string');
             assert(typeof res.body.documents === 'object');
+            assert(res.body.message === 'Number of documents found: 3');
             assert(res.body.documents.length === 3);
+            assert(res.body.documents[2].title === 'Trump has been covfefed');
+            assert(res.body.documents[2].content === 'We all belong somewhere. Some belong in the other room. Some decide to covfefe');
+            assert(res.body.documents[2].owner === 'Gold Ejikeme');
+            assert(res.body.documents[2].accessType === 'user');
+            assert(res.body.metaData.pageCount === 1);
+            assert(res.body.metaData.totalCount === 3);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -483,6 +523,11 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body.message === 'string');
           assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
+          assert(res.body.document.id === 1);
+          assert(res.body.document.title === 'Politik');
+          assert(res.body.document.content === 'Waterside and plastic lights. All going down memory lane');
+          assert(res.body.document.owner === 'Admin');
+          assert(res.body.document.accessType === 'public');
           assert(res.status === 200);
         } else {
           assert.ifError(err);
@@ -493,7 +538,7 @@ describe('Document Controller Test Suite', () => {
 
     it('should respond with `OK` if a user queries his/her documents', (done) => {
       api
-      .get('/api/v1/documents/4')
+      .get('/api/v1/documents/5')
       .set('Authorization', `${userToken}`)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -504,6 +549,11 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body.message === 'string');
           assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
+          assert(res.body.document.id === 5);
+          assert(res.body.document.title === 'Trump has been covfefed');
+          assert(res.body.document.content === 'We all belong somewhere. Some belong in the other room. Some decide to covfefe');
+          assert(res.body.document.owner === 'Gold Ejikeme');
+          assert(res.body.document.accessType === 'user');
           assert(res.status === 200);
         } else {
           assert.ifError(err);
@@ -525,6 +575,11 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body.message === 'string');
           assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document found!');
+          assert(res.body.document.id === 1);
+          assert(res.body.document.title === 'Politik');
+          assert(res.body.document.content === 'Waterside and plastic lights. All going down memory lane');
+          assert(res.body.document.owner === 'Admin');
+          assert(res.body.document.accessType === 'public');
           assert(res.status === 200);
         } else {
           assert.ifError(err);
@@ -649,7 +704,12 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body === 'object');
           assert(typeof res.body.message === 'string');
           assert(res.body.document.length === 1);
+          assert(res.body.document[0].id === 1);
           assert(res.body.document[0].title === 'Politik');
+          assert(res.body.document[0].content === 'Waterside and plastic lights. All going down memory lane');
+          assert(res.body.document[0].accessType === 'public');
+          assert(res.body.metaData.pageCount === 1);
+          assert(res.body.metaData.totalCount === 1);
           assert(res.status === 200);
         } else {
           assert.ifError(err);
@@ -718,6 +778,10 @@ describe('Document Controller Test Suite', () => {
           assert(typeof res.body.message === 'string');
           assert(typeof res.body.document === 'object');
           assert(res.body.message === 'Document Successfully Updated');
+          assert(res.body.document.title === 'The others');
+          assert(res.body.document.content === 'We all belong somewhere. Some belong in the other room');
+          assert(res.body.document.owner === 'Admin');
+          assert(res.body.document.accessType === 'private');
           assert(res.status === 200);
         } else {
           assert.ifError(err);
