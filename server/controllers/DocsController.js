@@ -8,10 +8,14 @@ import { Document } from '../models';
 class DocsController {
   /**
    * @description Registered and signed in users can create documents
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof DocsController
    */
   static createDocument(req, res) {
@@ -41,11 +45,15 @@ class DocsController {
 
   /**
    * @description Users can get any document that matches
-   *  their role or access type
+   * their role or access type
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof DocsController
    */
   static getDocuments(req, res) {
@@ -64,11 +72,15 @@ class DocsController {
 
   /**
    * @description Users can find documents by id, matching with theirs
-      while an admin can find any document inclusive of theirs.
+   * while an admin can find any document inclusive of theirs.
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof DocsController
    */
   static findDocument(req, res) {
@@ -98,29 +110,35 @@ class DocsController {
 
   /**
    * @description Users can only update (a) document(s)
-      that matches their id
+   * that matches their id
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof DocsController
    */
   static updateDocument(req, res) {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    return Helpers.updateDocumentHelper(req, res).catch(error =>
-      res.status(500).send(error)
-    );
+    return Helpers.updateDocumentHelper(req, res);
   }
 
   /**
    * @description Users can delete documents matching their id
-      while an admin can delete ant document
+   * while an admin can delete ant document
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} response
+   *
    * @memberof DocsController
    */
   static deleteDocument(req, res) {
@@ -153,11 +171,15 @@ class DocsController {
 
   /**
    * @description Enables users search through their documents
-      while an admin can search through all documents
+   * while an admin can search through all documents
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} Document
+   *
    * @memberof DocsController
    */
   static searchDocuments(req, res) {

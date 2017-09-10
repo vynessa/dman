@@ -9,10 +9,13 @@ class UsersController {
 
   /**
    * @description This enables users to register on the
-      application and get a generated JWT
+   * application and get a generated JWT
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static registerUser(req, res) {
@@ -42,11 +45,15 @@ class UsersController {
 
   /**
    * @description This allow users login into the
-      application if registered
+   * application if registered
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static loginUser(req, res) {
@@ -92,11 +99,15 @@ class UsersController {
   }
 
   /**
-   * @description This enables the admin user only to create other users
+   * @description This enables the admin user only to create users
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static createUser(req, res) {
@@ -110,11 +121,15 @@ class UsersController {
 
   /**
    * @description Enables admin users only to get all
-      users in the application
+   * users in the application
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static getUsers(req, res) {
@@ -136,11 +151,6 @@ class UsersController {
       attributes: ['fullName', 'id', 'email', 'role', 'createdAt']
     };
     User.findAll(query).then((users) => {
-      if (users.length === 0) {
-        return res.status(404).send({
-          message: 'No user found!'
-        });
-      }
       const totalUsersCount = users.length;
       const metaData = Helpers.pagination(
         limit, offset, totalUsersCount, users
@@ -156,10 +166,14 @@ class UsersController {
 
   /**
    * @description Enables only an admin get a user by id
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static findUser(req, res) {
@@ -191,11 +205,15 @@ class UsersController {
 
   /**
    * @description Users can get all documents belonging to them by id
-      while an admin can get any user's documents by id
+   * while an admin can get any user's documents by id
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof DocsController
    */
   static findUserDocuments(req, res) {
@@ -245,11 +263,15 @@ class UsersController {
 
   /**
    * @description Enables users update their profile except their role
-      while the admin can update any user's profile
+   * while the admin can update any user's profile
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static updateUser(req, res) {
@@ -266,11 +288,15 @@ class UsersController {
 
   /**
    * @description Enables a user delete his profile
-      while an admin can delete all
+   * while an admin can delete all
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} response
+   *
    * @memberof UsersController
    */
   static deleteUser(req, res) {
@@ -304,10 +330,14 @@ class UsersController {
 
   /**
    * @description Enables the admin search for a particular user
+   *
    * @static
+   *
    * @param {object} req HTTP request object
    * @param {object} res HTTP response object
+   *
    * @returns {object} User
+   *
    * @memberof UsersController
    */
   static searchUsers(req, res) {

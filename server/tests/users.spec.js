@@ -4,7 +4,13 @@ import app from '../../build/server';
 
 const api = request(app);
 
-let token, userToken, role, fullName, email, password;
+/** User's details */
+let token;
+let userToken;
+let role;
+let fullName;
+let email;
+let password;
 
 describe('Users Controller Test suite', () => {
   describe('Check Token Test Suite', () => {
@@ -49,7 +55,7 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(typeof res.body === 'object');
             assert(typeof res.body.message === 'string');
-            assert(res.body.message === 'Please set token in the header!');
+            assert(res.body.message === 'Please set your token in the header!');
             assert(res.status === 401);
           } else {
             assert.ifError(err);
@@ -94,6 +100,7 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'This email already exists!');
             assert(res.status === 409);
           } else {
@@ -116,6 +123,7 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
+            assert(typeof res.body.errors.message === 'string');
             assert(res.body.errors.message === 'An email is required');
             assert(res.status === 400);
           } else {
@@ -163,8 +171,9 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(typeof res.body === 'object');
             assert(typeof res.body.user === 'object');
-            assert(typeof res.body.user.fullName === 'string');
             assert(res.body.user.fullName === 'Admin');
+            assert(res.body.user.id === 1);
+            assert(res.body.user.role === 'admin');
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -278,7 +287,10 @@ describe('Users Controller Test suite', () => {
             assert(typeof res.body === 'object');
             assert(typeof res.body.user.email === 'string');
             assert(Object.keys(res.body.user).length === 5);
+            assert(res.body.user.fullName === 'Femi Medale');
             assert(res.body.user.email === 'femi@gmail.com');
+            assert(res.body.user.role === 'user');
+            assert(res.body.user.id === 3);
             assert(res.status === 201);
           } else {
             assert.ifError(err);
@@ -308,6 +320,9 @@ describe('Users Controller Test suite', () => {
               assert(typeof res.body.user.email === 'string');
               assert(Object.keys(res.body.user).length === 5);
               assert(res.body.user.email === 'seyi@adeleke.com');
+              assert(res.body.user.fullName === 'Seyi Adeleke');
+              assert(res.body.user.role === 'user');
+              assert(res.body.user.id === 4);
               assert(res.status === 201);
             } else {
               assert.ifError(err);
@@ -401,6 +416,13 @@ describe('Users Controller Test suite', () => {
               assert(typeof res.body === 'object');
               assert(typeof res.body.users === 'object');
               assert(res.body.users.length === 4);
+              assert(res.body.message === 'Number of users found: 4');
+              assert(res.body.users[3].fullName === 'Seyi Adeleke');
+              assert(res.body.users[3].id === 4);
+              assert(res.body.users[3].email === 'seyi@adeleke.com');
+              assert(res.body.users[3].role === 'user');
+              assert(res.body.metaData.pageCount === 1);
+              assert(res.body.metaData.totalCount === 4);
               assert(res.status === 200);
             } else {
               assert.ifError(err);
@@ -463,6 +485,9 @@ describe('Users Controller Test suite', () => {
             assert(typeof res.body === 'object');
             assert(typeof res.body.user === 'object');
             assert(res.body.user.id === 1);
+            assert(res.body.user.fullName === 'Admin');
+            assert(res.body.user.role === 'admin');
+            assert(res.body.user.email === 'info@admin.com');
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -483,6 +508,9 @@ describe('Users Controller Test suite', () => {
             assert(typeof res.body === 'object');
             assert(typeof res.body.user === 'object');
             assert(res.body.user.id === 1);
+            assert(res.body.user.fullName === 'Admin');
+            assert(res.body.user.role === 'admin');
+            assert(res.body.user.email === 'info@admin.com');
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -606,9 +634,17 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(typeof res.body === 'object');
             assert(typeof res.body.message === 'string');
-            assert(res.body.documents.length === 2);
+            assert(res.body.documents.length === 3);
             assert(res.body.documents[0].title === 'Politik');
+            assert(res.body.documents[0].owner === 'Admin');
+            assert(res.body.documents[0].id === 1);
+            assert(res.body.documents[0].accessType === 'public');
+            assert(res.body.documents[1].title === 'Tori Kelly');
+            assert(res.body.documents[1].owner === 'Admin');
+            assert(res.body.documents[1].id === 3);
             assert(res.body.documents[1].accessType === 'private');
+            assert(res.body.metaData.pageCount === 1);
+            assert(res.body.metaData.totalCount === 3);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -630,6 +666,11 @@ describe('Users Controller Test suite', () => {
             assert(typeof res.body.message === 'string');
             assert(res.body.documents.length === 1);
             assert(res.body.documents[0].title === 'Trump has been covfefed');
+            assert(res.body.documents[0].owner === 'Gold Ejikeme');
+            assert(res.body.documents[0].id === 5);
+            assert(res.body.documents[0].accessType === 'user');
+            assert(res.body.metaData.pageCount === 1);
+            assert(res.body.metaData.totalCount === 1);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -753,8 +794,13 @@ describe('Users Controller Test suite', () => {
           if (!err) {
             assert(typeof res.body === 'object');
             assert(typeof res.body.message === 'string');
+            assert(res.body.message === 'Number of users found: 1');
             assert(res.body.users.length === 1);
             assert(res.body.users[0].fullName === 'Admin');
+            assert(res.body.users[0].id === 1);
+            assert(res.body.users[0].role === 'admin');
+            assert(res.body.metaData.pageCount === 1);
+            assert(res.body.metaData.totalCount === 1);
             assert(res.status === 200);
           } else {
             assert.ifError(err);
@@ -889,9 +935,13 @@ describe('Users Controller Test suite', () => {
         .end((err, res) => {
           if (!err) {
             assert(typeof res.body === 'object');
-            assert(typeof res.body.message === 'string');
             assert(typeof res.body.user === 'object');
+            assert(typeof res.body.message === 'string');
             assert(res.body.message === 'Profile successfully updated');
+            assert(res.body.user.fullName === 'Gold Ejike');
+            assert(res.body.user.id === 2);
+            assert(res.body.user.email === 'gold.ejike@gmail.com');
+            assert(res.body.user.role === 'admin');
             assert(res.status === 200);
           }
           done();
