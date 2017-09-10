@@ -125,9 +125,7 @@ class DocsController {
     if (!Number.isInteger(Number(req.params.id))) {
       return Helpers.idValidator(res);
     }
-    return Helpers.updateDocumentHelper(req, res).catch(error =>
-      res.status(500).send(error)
-    );
+    return Helpers.updateDocumentHelper(req, res);
   }
 
   /**
